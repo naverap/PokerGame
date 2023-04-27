@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+            android:background="#bf7960"
+        android:id="@+id/GameContainer"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:id="@+id/li"
+    android:layout_height="match_parent">
+
+       
+        <RelativeLayout
+            android:layout_weight="0.3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/relativeLayout2"
+            android:orientation="vertical" >
+             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hello"
+                 android:id="@+id/tv1"
+                android:layout_centerVertical="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hello"
+                 android:id="@+id/tv2"
+                android:layout_centerHorizontal="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="hello"
+                 android:id="@+id/tv3"
+                android:layout_centerHorizontal="true"/>
+
+             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="50dp"
+                android:text="Victory"
+                 android:id="@+id/tv4"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="60dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="50dp"
+                android:text="Victory"
+                 android:id="@+id/tv5"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="60dp"/>
+
+            </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/relativeLayout3"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="hello"
+                android:id="@+id/tv4"
+                android:layout_centerVertical="true"
+               />
+    
+    
+            <Button
+              android:text="Check"
+              android:backgroundTint="#0566e6"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentBottom="true"
+              android:layout_alignParentEnd="true"
+                android:id="@+id/checkbtn"
+           
+               />
+              <Button
+                android:text="Raise"
+                android:backgroundTint="#f0e80c"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="37.5dp"
+                android:id="@+id/raisebtn"
+          
+               />
+              <Button
+                android:text="Fold"
+                android:backgroundTint="#b81004"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="75dp"
+                android:id="@+id/foldbtn"
+           
+               />
+
+            
+            <Button
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="settings"
+         android:textSize="10dp"
+         android:textColor="#000000"
+         android:id="@+id/menubtn2"
+         android:layout_weight="0.3"
+         android:layout_alignParentEnd="true"
+         />
+
+
+
+
+
+        </RelativeLayout>
+      
+    
+    
+
+    </LinearLayout>
+  
+
+
+</RelativeLayout>

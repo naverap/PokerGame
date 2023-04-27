@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="#FFD700"
+    android:layout_height="match_parent">
+   
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <EditText
+        android:text="0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etraise"/>
+
+        <Button
+                android:text="25% pot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:id="@+id/quarterpotbtn"/>/>
+            <Button
+                android:text="50% pot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="100dp"
+                android:id="@+id/halfpotbtn"/>/>
+            <Button
+                android:text="pot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                 android:layout_centerVertical="true"
+                 android:layout_marginLeft="200dp"
+                android:id="@+id/potbtn"/>/>
+            <Button
+                android:text="all in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="300dp"
+                android:id="@+id/allinbtn"/>
+
+    <Button
+        android:text="submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/submitRaisebtn"/>
+
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "614935527790",
+    "project_id": "pokergame2",
+    "storage_bucket": "pokergame2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614935527790:android:cbe396a1c9dc9a60f8c17f",
+        "android_client_info": {
+          "package_name": "com.companyname.pokergame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "614935527790-so0gb4mknlct3m92skdt9gbr2vp4do5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCASOGnHrcqa5YDEXzY4lPqENz5Fk6CNcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "614935527790-so0gb4mknlct3m92skdt9gbr2vp4do5l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
