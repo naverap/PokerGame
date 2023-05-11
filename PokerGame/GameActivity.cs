@@ -15,6 +15,7 @@ using static Java.Util.Jar.Attributes;
 using Java.Util;
 using PokerLib;
 using Android.Gms.Tasks;
+using Google.Cloud.Firestore;
 
 namespace PokerGame
 {
@@ -49,8 +50,27 @@ namespace PokerGame
 
 
             Live.db = GetDataBase();
-            
-            
+            var collection = Live.db.Collection("test");
+            var docref = collection.Document("Game1");
+            HashMap map = new HashMap();
+            map.Put("name", "jj111");
+            docref.Set(map);
+
+
+            //const string projectId = "pokergame2";
+            //var db = FirestoreDb.Create(projectId);
+            //var collection = db.Collection("test");
+            //var document = collection.AddAsync(new { Name = new { First = "Ada", Last = "Lovelace" }, Born = 1815 }).Result;
+
+
+
+            // A DocumentReference doesn't contain the data - it's just a path.
+            // Let's fetch the current document.
+            //DocumentSnapshot snapshot = await document.GetSnapshotAsync();
+
+
+
+
             if (Intent.GetIntExtra("PlayerId", 1) == 1)
             {
                 MyGame = CreateGame();
@@ -64,18 +84,18 @@ namespace PokerGame
 
         public void OnSuccess(Java.Lang.Object result)
         {
-            var snapshot = (QuerySnapshot)result;
-            Card c;
-            foreach (var doc in snapshot.Documents)
-            {
-                c = new Card((CardSuit)(int)doc.Get("P1Card1Suit"), (CardValue)(int)doc.Get("P1Card1Value"));
-                Console.WriteLine(c.ToString());
-            }
+            //var snapshot = (QuerySnapshot)result;
+            //Card c;
+            //foreach (var doc in snapshot.Documents)
+            //{
+            //    c = new Card((CardSuit)(int)doc.Get("P1Card1Suit"), (CardValue)(int)doc.Get("P1Card1Value"));
+            //    Console.WriteLine(c.ToString());
+            //}
         }
 
         private void UpLoadStartingGameState()
         {
-            DocumentReference docRef = Live.db.Collection("Games").Document("Game1");
+            //DocumentReference docRef = Live.db.Collection("Games").Document("Game1");
             //docRef.Set(MyGame);
 
             // Create a HashMap to store your data like an object
@@ -120,9 +140,9 @@ namespace PokerGame
         private void LoadGame()
         {
             // generate a query (request) from the database
-            Query q = Live.db.Collection("students");
-            // perform the request
-            q.Get().AddOnSuccessListener(this);
+            //Query q = Live.db.Collection("students");
+            //// perform the request
+            //q.Get().AddOnSuccessListener(this);
         }
 
         protected override void OnStart()

@@ -236,7 +236,7 @@ public class Game
             return false;
 
         do { SetNextPlayerTurn(); }
-        while (!CurrentPlayer.HasFolded);
+        while (CurrentPlayer.HasFolded);
 
         return true;
     }
@@ -260,8 +260,12 @@ public class Game
                 LastBet = amount;
                 return true;
             case BetType.Call:
+                if (LastBet == 0)
+                    return false;
                 return MakeBet(player, BetType.Bet, LastBet);
             case BetType.Raise:
+                if (LastBet == 0)
+                    return false;
                 return MakeBet(player, BetType.Bet, LastBet + amount);
             case BetType.AllIn:
                 return MakeBet(player, BetType.Bet, player.Pot);

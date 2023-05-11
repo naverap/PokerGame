@@ -5,12 +5,25 @@ namespace PokerLib;
 public class Hand
 {
     public Card[] Cards { get; set; }
+    public int Stregth { get; set; }
+    public string Name { get; set; }
+    public bool IsValid { get; set; }
+    public virtual bool Verify => true;
 
     public Hand(Card[] cards)
     {
         Cards = cards;
     }
     public Hand() { }
+
+    public static Hand CreateHand(Card[] cards)
+    {
+        Hand twoPair = new HandTwoPair(cards);
+        if (twoPair.IsValid) return twoPair;
+        Hand pair = new HandPair(cards);
+        if (pair.IsValid) return pair;
+        return new Hand(cards);
+    }
 
     public int Strength()
     {
@@ -77,7 +90,7 @@ public class Hand
 
     public bool IsStraight => ContainsStraight(this);
 
-    private static bool ContainsStraight(Hand hand)
+    protected static bool ContainsStraight(Hand hand)
     {
         if (hand.Contains(CardValue.Ace) &&
              hand.Contains(CardValue.Two) &&
@@ -104,7 +117,7 @@ public class Hand
         return false;
     }
 
-    private bool Contains(CardValue v)
+    protected bool Contains(CardValue v)
     {
         for (int i = 0; i < Cards.Length; i++)
         {
