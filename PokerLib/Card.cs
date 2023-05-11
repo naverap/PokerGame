@@ -1,110 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace PokerLib
+namespace PokerLib;
+
+public struct Card
 {
-    public class Card
+    public CardSuit Suit { get; set; }
+    public CardValue Value { get; set; }
+    public string Name { get; set; }
+    public string DisplayName { get; set; }
+
+    static readonly char[] SuitChars = new[] { '♣', '♢', '♡', '♠' };
+
+    public Card(CardSuit suit, CardValue value)
     {
+        Suit = suit;
+        Value = value;
+        Name = $"{Value}_of_{Suit}".ToLowerInvariant();
+        DisplayName = GetDisplayName();
+    }
 
-        public enum ValueEnum
+    string GetDisplayName()
+    {
+        var suitChar = SuitChars[(int)Suit];
+        var valueName = Value <= CardValue.Ten
+            ? ((int)Value).ToString()
+            : Value.ToString().Substring(0, 1);
+        return valueName + suitChar;
+    }
+
+    public static Card Parse(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentNullException(nameof(name));
+        if (name.Length > 3)
         {
-            Two = 2,
-            Three,
-            Four,
-            Five,
-            Six,
-            Seven,
-            Eight,
-            Nine,
-            Ten,
-            Jack,
-            Queen,
-            King,
-            Ace
-
+            var parts = name.Split('_');
+            Enum.TryParse(parts[0], true, out CardValue value);
+            Enum.TryParse(parts[2], true, out CardSuit suit);
+            return new Card(suit, value);
         }
-
-        public enum SuitEnum
+        else
         {
-            Spades,
-            Diamonds,
-            Hearts,
-            Clubs
+            var valueName = name.Substring(0, name.Length - 1);
+            var suitChar = name[name.Length - 1];
+            var suit = (CardSuit)Array.IndexOf(SuitChars, suitChar);
+            var value = valueName switch
+            {
+                "A" => CardValue.Ace,
+                "K" => CardValue.King,
+                "Q" => CardValue.Queen,
+                "J" => CardValue.Jack,
+                _ => (CardValue)int.Parse(valueName)
+            };
+            return new Card(suit, value);
         }
-
-
-
-        public SuitEnum Suit { get; set; }
-        public ValueEnum Value { get; set; }
-        public string imageFile { get; set; }
-
-        public Card(SuitEnum mysuit, ValueEnum myValue)
-        {
-            Suit = mysuit;
-            Value = myValue;
-            imageFile = cardImages[new Tuple<SuitEnum, ValueEnum>(Suit, Value)];
-        }
-        public Card()
-        {
-
-        }
-
-        private static Dictionary<Tuple<SuitEnum, ValueEnum>, string> cardImages = new Dictionary<Tuple<SuitEnum, ValueEnum>, string>
-{
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Two), "two_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Three), "three_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Four), "four_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Five), "five_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Six), "six_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Seven), "seven_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Eight), "eight_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Nine), "nine_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Ten), "ten_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Jack), "jack_of_clubs2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Queen), "queen_of_clubs2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.King), "king_of_clubs2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Clubs, ValueEnum.Ace), "ace_of_clubs" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Two), "two_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Three), "three_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Four), "four_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Five), "five_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Six), "six_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Seven), "seven_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Eight), "eight_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Nine), "nine_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Ten), "ten_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Jack), "jack_of_diamonds2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Queen), "queen_of_diamonds2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.King), "king_of_diamonds2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Diamonds, ValueEnum.Ace), "ace_of_diamonds" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Two), "two_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Three), "three_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Four), "four_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Five), "five_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Six), "six_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Seven), "seven_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Eight), "eight_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Nine), "nine_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Ten), "ten_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Jack), "jack_of_hearts2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Queen), "queen_of_hearts2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.King), "king_of_hearts2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Hearts, ValueEnum.Ace), "ace_of_hearts" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Two), "two_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Three), "three_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Four), "four_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Five), "five_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Six), "six_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Seven), "seven_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Eight), "eight_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Nine), "nine_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Ten), "ten_of_spades" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Jack), "jack_of_spades2." },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Queen), "queen_of_spades2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.King), "king_of_spades2" },
-    { new Tuple<SuitEnum, ValueEnum>(SuitEnum.Spades, ValueEnum.Ace), "ace_of_spades" },
-
-        };
-
     }
 }

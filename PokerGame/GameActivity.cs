@@ -68,7 +68,7 @@ namespace PokerGame
             Card c;
             foreach (var doc in snapshot.Documents)
             {
-                c = new Card((Card.SuitEnum)(int)doc.Get("P1Card1Suit"), (Card.ValueEnum)(int)doc.Get("P1Card1Value"));
+                c = new Card((CardSuit)(int)doc.Get("P1Card1Suit"), (CardValue)(int)doc.Get("P1Card1Value"));
                 Console.WriteLine(c.ToString());
             }
         }
@@ -76,7 +76,7 @@ namespace PokerGame
         private void UpLoadStartingGameState()
         {
             DocumentReference docRef = Live.db.Collection("Games").Document("Game1");
-            docRef.Set(MyGame);
+            //docRef.Set(MyGame);
 
             // Create a HashMap to store your data like an object
             // HashMap is a collection of "keys" and "values"
@@ -241,7 +241,7 @@ namespace PokerGame
         private void SubmitRaise_Click(object sender, EventArgs e)
         {
             var sum = Int32.Parse(et.Text);
-            MyGame.Bet(sum);
+            MyGame.BetOld(sum);
         }
 
         private void Btncheck_Click(object sender, EventArgs e)
@@ -299,7 +299,7 @@ namespace PokerGame
                 SetUpNewGame();
             }
 
-            MyGame.NextPlayerTurn();
+            MyGame.SetNextPlayerTurn();
         }
 
         private void DrawCards(int round, Player player)
@@ -321,13 +321,13 @@ namespace PokerGame
                 string str2 = "";
                 if (player.Id == p1.Id)
                 {
-                    str = MyGame.Players[0].PlayerCards[0].imageFile;
-                    str = MyGame.Players[0].PlayerCards[1].imageFile;
+                    str = MyGame.Players[0].Cards[0].Name;
+                    str = MyGame.Players[0].Cards[1].Name;
                 }
                 else
                 {
-                    str = MyGame.Players[1].PlayerCards[0].imageFile;
-                    str2 = MyGame.Players[1].PlayerCards[1].imageFile;
+                    str = MyGame.Players[1].Cards[0].Name;
+                    str2 = MyGame.Players[1].Cards[1].Name;
                 }
 
                 imgkey1 = Resources.GetIdentifier("" + str, "drawable", this.PackageName);
@@ -366,17 +366,17 @@ namespace PokerGame
                 string str2 = "";
                 if (player.Id == p1.Id)
                 {
-                    str = MyGame.Players[0].PlayerCards[0].imageFile;
-                    str = MyGame.Players[0].PlayerCards[1].imageFile;
+                    str = MyGame.Players[0].Cards[0].Name;
+                    str = MyGame.Players[0].Cards[1].Name;
                 }
                 else
                 {
-                    str = MyGame.Players[1].PlayerCards[0].imageFile;
-                    str2 = MyGame.Players[1].PlayerCards[1].imageFile;
+                    str = MyGame.Players[1].Cards[0].Name;
+                    str2 = MyGame.Players[1].Cards[1].Name;
                 }
-                string str3 = MyGame.TableCards[0].imageFile;
-                string str4 = MyGame.TableCards[1].imageFile;
-                string str5 = MyGame.TableCards[2].imageFile;
+                string str3 = MyGame.TableCards[0].Name;
+                string str4 = MyGame.TableCards[1].Name;
+                string str5 = MyGame.TableCards[2].Name;
                 imgkey1 = Resources.GetIdentifier("" + str, "drawable", this.PackageName);
                 imgkey2 = Resources.GetIdentifier("" + str2, "drawable", this.PackageName);
                 imgkey3 = Resources.GetIdentifier("" + str3, "drawable", this.PackageName);
@@ -425,18 +425,18 @@ namespace PokerGame
                 string str2 = "";
                 if (player.Id == p1.Id)
                 {
-                    str = MyGame.Players[0].PlayerCards[0].imageFile;
-                    str = MyGame.Players[0].PlayerCards[1].imageFile;
+                    str = MyGame.Players[0].Cards[0].Name;
+                    str = MyGame.Players[0].Cards[1].Name;
                 }
                 else
                 {
-                    str = MyGame.Players[1].PlayerCards[0].imageFile;
-                    str2 = MyGame.Players[1].PlayerCards[1].imageFile;
+                    str = MyGame.Players[1].Cards[0].Name;
+                    str2 = MyGame.Players[1].Cards[1].Name;
                 }
-                string str3 = MyGame.TableCards[0].imageFile;
-                string str4 = MyGame.TableCards[1].imageFile;
-                string str5 = MyGame.TableCards[2].imageFile;
-                string str6 = MyGame.TableCards[3].imageFile;
+                string str3 = MyGame.TableCards[0].Name;
+                string str4 = MyGame.TableCards[1].Name;
+                string str5 = MyGame.TableCards[2].Name;
+                string str6 = MyGame.TableCards[3].Name;
                 imgkey1 = Resources.GetIdentifier("" + str, "drawable", this.PackageName);
                 imgkey2 = Resources.GetIdentifier("" + str2, "drawable", this.PackageName);
                 imgkey3 = Resources.GetIdentifier("" + str3, "drawable", this.PackageName);
@@ -492,19 +492,19 @@ namespace PokerGame
                 string str2 = "";
                 if (player.Id == p1.Id)
                 {
-                    str = MyGame.Players[0].PlayerCards[0].imageFile;
-                    str = MyGame.Players[0].PlayerCards[1].imageFile;
+                    str = MyGame.Players[0].Cards[0].Name;
+                    str = MyGame.Players[0].Cards[1].Name;
                 }
                 else
                 {
-                    str = MyGame.Players[1].PlayerCards[0].imageFile;
-                    str2 = MyGame.Players[1].PlayerCards[1].imageFile;
+                    str = MyGame.Players[1].Cards[0].Name;
+                    str2 = MyGame.Players[1].Cards[1].Name;
                 }
-                string str3 = MyGame.TableCards[0].imageFile;
-                string str4 = MyGame.TableCards[1].imageFile;
-                string str5 = MyGame.TableCards[2].imageFile;
-                string str6 = MyGame.TableCards[3].imageFile;
-                string str7 = MyGame.TableCards[4].imageFile;
+                string str3 = MyGame.TableCards[0].Name;
+                string str4 = MyGame.TableCards[1].Name;
+                string str5 = MyGame.TableCards[2].Name;
+                string str6 = MyGame.TableCards[3].Name;
+                string str7 = MyGame.TableCards[4].Name;
                 imgkey1 = Resources.GetIdentifier("" + str, "drawable", this.PackageName);
                 imgkey2 = Resources.GetIdentifier("" + str2, "drawable", this.PackageName);
                 imgkey3 = Resources.GetIdentifier("" + str3, "drawable", this.PackageName);

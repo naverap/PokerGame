@@ -1,14 +1,6 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.Graphics;
-using Android.OS;
-using Android.Runtime;
 using Android.Views;
-using Android.Widget;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PokerGame
 {
@@ -17,38 +9,27 @@ namespace PokerGame
         public PokerTableView(Context context) : base(context)
         {
         }
-        int tableWidth;
-        int tableHeight;
-        int left;
-        int top;
+
         protected override void OnDraw(Canvas canvas)
         {
-            // Calculate the size and position of the table
-       
-            tableWidth = canvas.Width / 2;
-            tableHeight = canvas.Height / 2;
-            left = (canvas.Width - tableWidth) / 2;
-            top = (canvas.Height - tableHeight) / 2;
             base.OnDraw(canvas);
 
-            // Draw the table
-            DrawTable(canvas);
+            // Calculate the size and position of the table
+            var width = canvas.Width / 2;
+            var height = canvas.Height / 2;
+            var left = (canvas.Width - width) / 2;
+            var top = (canvas.Height - height) / 2;
 
-
-            Invalidate();
-        }
-
-
-        void DrawTable(Canvas canvas)
-        {
             // Set up the paint for the table
-            Paint paint = new Paint
+            var paint = new Paint
             {
                 Color = new Color(0x77, 0x6E, 0x65)
             };
-            
+
             // Draw the table
-            canvas.DrawRect(left, top, left + tableWidth, top + tableHeight, paint);
+            canvas.DrawRect(left, top, left + width, top + height, paint);
+
+            Invalidate();
         }
     }
 }
