@@ -18,77 +18,32 @@ public class Hand
 
     public static Hand CreateHand(Card[] cards)
     {
+        Hand straightFlush = new HandStraightFlush(cards);
+        if (straightFlush.IsValid) return straightFlush;
+        Hand fourOfAKind = new HandFourOfAKind(cards);
+        if (fourOfAKind.IsValid) return fourOfAKind;
+        Hand fullHouse = new HandFullHouse(cards);
+        if (fullHouse.IsValid) return fullHouse;
+        Hand flush = new HandFlush(cards);
+        if (flush.IsValid) return flush;
+        Hand straight = new HandStraight(cards);
+        if (straight.IsValid) return straight;
+        Hand threeOfAKind = new HandThreeOfAKInd(cards);
+        if (threeOfAKind.IsValid) return threeOfAKind; 
         Hand twoPair = new HandTwoPair(cards);
         if (twoPair.IsValid) return twoPair;
         Hand pair = new HandPair(cards);
         if (pair.IsValid) return pair;
-        return new Hand(cards);
+        return new HandHighCard(cards);
     }
 
-    public int Strength()
-    {
 
-        if (IsStraightFlush)
-        {
-            return 8;
-        }
-        if (IsFourOfAKind)
-        {
-            return 7;
-        }
-        if (IsFullHouse)
-        {
-            return 6;
-        }
-        if (IsFlush)
-        {
-            return 5;
-        }
-        if (IsStraight)
-        {
-            return 4;
-        }
-        if (IsThreeOfAKind)
-        {
-            return 3;
-        }
-        if (IsTwoPair)
-        {
-            return 2;
-        }
-        if (IsPair)
-        {
-            return 1;
-        }
-        return 0;
-    }
-
-    public bool IsPair => Cards.GroupBy(h => h.Value)
-        .Where(g => g.Count() == 2)
-        .Count() == 1;
-
-    public bool IsTwoPair => Cards.GroupBy(h => h.Value)
-        .Where(g => g.Count() == 2)
-        .Count() > 1;
-
-    public bool IsThreeOfAKind => Cards.GroupBy(h => h.Value)
-        .Where(g => g.Count() == 3)
-        .Count() == 1;
-
-    public bool IsDoubleThreeOfAKind => Cards.GroupBy(h => h.Value)
-        .Where(g => g.Count() == 3)
-        .Count() == 2;
-
-    public bool IsFourOfAKind => Cards.GroupBy(h => h.Value)
-        .Where(g => g.Count() == 4)
-        .Any();
-    public bool IsFullHouse => IsPair && IsThreeOfAKind || IsDoubleThreeOfAKind;
 
     public bool IsFlush => Cards.GroupBy(h => h.Suit)
         .Where(g => g.Count() >= 5)
         .Any();
 
-    public bool IsStraight => ContainsStraight(this);
+   
 
     protected static bool ContainsStraight(Hand hand)
     {
@@ -129,20 +84,5 @@ public class Hand
         return false;
     }
 
-    public bool IsStraightFlush
-    {
-        get
-        {
-            if (!IsFlush) return false;
-
-            var flashSuit = Cards.GroupBy(h => h.Suit)
-                .Where(g => g.Count() >= 5)
-                .Single()
-                .Key;
-
-            var handFromFlush = new Hand(Cards.Where(card => card.Suit == flashSuit).ToArray());
-
-            return ContainsStraight(handFromFlush);
-        }
-    }
+   
 }

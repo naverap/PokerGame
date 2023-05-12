@@ -16,6 +16,7 @@ using Java.Util;
 using PokerLib;
 using Android.Gms.Tasks;
 using Google.Cloud.Firestore;
+using System.Threading;
 
 namespace PokerGame
 {
@@ -294,12 +295,12 @@ namespace PokerGame
             textview1.Text = MyGame.Players[0].Pot.ToString();
             textview2.Text = MyGame.Players[1].Pot.ToString();
             textview3.Text = MyGame.Pot.ToString();
-            if (MyGame.CurrentRound > 4)
-            {
-                Player[] winners = MyGame.CheckWinners();
-                didPlayerOneWin = winners.Contains(p1);
-                didPlayerTwoWin = winners.Contains(p2);
-            }
+            //if (MyGame.CurrentRound > 4)
+            //{
+            //    Player[] winners = MyGame.CheckWinners();
+            //    didPlayerOneWin = winners.Contains(p1);
+            //    didPlayerTwoWin = winners.Contains(p2);
+            //}
             if (didPlayerOneWin && didPlayerTwoWin)
             {
                 textview5.Visibility = ViewStates.Visible;

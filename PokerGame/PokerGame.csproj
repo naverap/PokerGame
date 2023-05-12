@@ -62,6 +62,7 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FlightModeReceiver.cs" />
     <Compile Include="GameActivity.cs" />
     <Compile Include="FirestoreGame.cs" />
     <Compile Include="Live.cs" />

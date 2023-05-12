@@ -23,6 +23,7 @@ namespace PokerGame
         Button btn1, btn2, btnhome, btngame, btnsettings;
         Dialog d;
         public int CurrentId = 1;
+        BroadcastReceiver flightModeReceiver = new FlightModeReceiver();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -36,7 +37,19 @@ namespace PokerGame
             btn2 = (Button)FindViewById(Resource.Id.menubtn);
             btn2.Click += Btn2_Click;
         }
-        
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            RegisterReceiver(flightModeReceiver, new IntentFilter("android.intent.action.AIRPLANE_MODE"));
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            UnregisterReceiver(flightModeReceiver);
+        }
+
 
         private void Btn2_Click(object sender, EventArgs e)
         {

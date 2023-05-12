@@ -14,5 +14,5 @@ public class HandTwoPair : Hand
 
     public override bool Verify => Cards.GroupBy(h => h.Value)
         .Where(g => g.Count() == 2)
-        .Count() > 1;
+        .Count() > 1; 
 }
