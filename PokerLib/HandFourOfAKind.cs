@@ -1,21 +1,18 @@
 ﻿using System.Linq;
 
-namespace PokerLib
+namespace PokerLib;
+
+public class HandFourOfAKind : Hand
 {
-    public class HandFourOfAKind : Hand
+    public HandFourOfAKind(Card[] cards)
     {
-        public HandFourOfAKind(Card[] cards)
-        {
-            Cards = cards;
-            Stregth = 7;
-            Name = "FourOfAKind";
-            IsValid = Verify;
+        Cards = cards;
+        Stregth = 7;
+        Name = "FourOfAKind";
+        IsValid = Verify;
 
-        }
-        public bool Verify => Cards.GroupBy(h => h.Value)
-       .Where(g => g.Count() == 4)
-       .Any();
     }
-
- 
+    public override bool Verify => Cards.GroupBy(h => h.Value)
+        .Where(g => g.Count() == 4)
+        .Any();
 }

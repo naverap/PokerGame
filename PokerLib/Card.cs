@@ -1,22 +1,34 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace PokerLib;
 
 public struct Card
 {
-    public CardSuit Suit { get; set; }
-    public CardValue Value { get; set; }
-    public string Name { get; set; }
-    public string DisplayName { get; set; }
+    public int Id { get; set; }
+
+    [JsonIgnore]
+    public CardSuit Suit => (CardSuit)(Id / 13);
+
+    [JsonIgnore]
+    public CardValue Value => (CardValue)(Id % 13 + 2);
+
+    [JsonIgnore]
+    public string Name => $"{Value}_of_{Suit}".ToLowerInvariant();
+
+    [JsonIgnore]
+    public string DisplayName => GetDisplayName();
 
     static readonly char[] SuitChars = new[] { '♣', '♢', '♡', '♠' };
 
     public Card(CardSuit suit, CardValue value)
     {
-        Suit = suit;
-        Value = value;
-        Name = $"{Value}_of_{Suit}".ToLowerInvariant();
-        DisplayName = GetDisplayName();
+        Id = (int)suit * 13 + (int)value - 2;
+    }
+
+    public Card(int id)
+    {
+        Id = id;
     }
 
     string GetDisplayName()

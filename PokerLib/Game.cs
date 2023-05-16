@@ -1,33 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PokerLib;
 
 public class Game
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public int MaxPlayers { get; set; }
-    public int PlayerCount { get; set; }
     public int Pot { get; set; }
     public int CurrentDealerLocation { get; }
     public int CurrentPlayerLocation { get; }
     public int LastBet { get; set; }
     public int GameDeckIndex { get; set; }
     public int CurrentRound { get; set; }
-    public Card[] Deck;
-    public Card[] TableCards;
-    public List<Player> Players;
-    public Player CurrentPlayer;
-    public int CurrentPlayerIndex;
+    public Card[] Deck { get; set; }
+    public Card[] TableCards { get; set; }
+    public List<Player> Players { get; set; }
+    public Player CurrentPlayer { get; set; }
+    public int CurrentPlayerIndex { get; set; }
+    public bool IsOngoing { get; set; }
+    public bool CanJoin => Players.Count < MaxPlayers && !IsOngoing;
 
     public Game()
     {
-        PlayerCount = 0;
+        MaxPlayers = 4;
+        Players = new();
         GameDeckIndex = 0;
         CurrentRound = 1;
         Pot = 0;
         TableCards = new Card[5];
         CreateDeck();
+    }
+
+    public static Game CreateGame()
+    {
+        var game = new Game();
+        game.Id = Guid.NewGuid();
+        game.DealCardsToGameCards(5);
+        //game.DealFirstRound();
+        return game;
     }
 
     public void CreateDeck()
@@ -46,45 +58,24 @@ public class Game
                 n++;
             }
         }
-        //ShuffleDeck();
         Deck.Shuffle();
     }
 
-    //public void ShuffleDeck()
-    //{
-    //    int[] returnArr = new int[52];
-    //    List<int> allNumbers = new List<int>();
-    //    List<int> allEmptySpaces = new List<int>();
-    //    Card[] deckcard = new Card[52];
-    //    for (int i = 0; i < 52; i++)
-    //    {
-    //        deckcard[i] = Deck[i];
-    //    }
-    //    Random rng = new Random();
-
-    //    for (int i = 0; i < 52; i++)
-    //    {
-    //        allNumbers.Add(i);
-    //        allEmptySpaces.Add(i);
-    //    }
-    //    while (allNumbers.Count > 0)
-    //    {
-    //        int randomIndex = allEmptySpaces[rng.Next(allEmptySpaces.Count)];
-    //        int number = allNumbers[rng.Next(allNumbers.Count)];
-
-    //        allNumbers.Remove(number);
-    //        allEmptySpaces.Remove(randomIndex);
-
-    //        returnArr[randomIndex] = number;
-    //    }
-    //    for (int i = 0; i < 52; i++)
-    //        Deck[returnArr[i]] = deckcard[i];
-    //}
+    int GetLowestAvailableId()
+    {
+        for (int id = 0; id < MaxPlayers; id++)
+            if (!Players.Exists(p => p.Id == id))
+                return id;
+        throw new Exception("no available space in game");
+    }
 
     public void AddPlayer(Player player)
     {
+        player.Id = GetLowestAvailableId();
+        player.Cards = TakeCardsFromGameDeck(2);
         Players.Add(player);
-        PlayerCount++;
+        CurrentPlayer ??= Players.First();
+
     }
 
     public void DealFirstRound()

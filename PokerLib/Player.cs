@@ -8,12 +8,12 @@ public class Player
     public bool HasFolded { get; set; }
     public Card[] Cards { get; set; }
 
-    public Player(int playerPot, int playerId, bool isPlaying)
+    public Player() { }
+
+    public Player(int playerPot, bool isPlaying)
     {
-        Id = playerId;
         Pot = playerPot;
         CurrentBet = 0;
         HasFolded = isPlaying;
-        //Cards = new Card[2];
     }
 }

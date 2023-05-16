@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
-namespace PokerLib
+namespace PokerLib;
+
+public class HandFlush : Hand
 {
-    public class HandFlush : Hand
+    public HandFlush(Card[] cards)
     {
-        public HandFlush(Card[] cards)
-        {
-            Cards = cards;
-            Stregth = 5;
-            Name = "Flush";
-            IsValid = Verify;
+        Cards = cards;
+        Stregth = 5;
+        Name = "Flush";
+        IsValid = Verify;
 
-        }
-
-        public bool Verify => Cards.GroupBy(h => h.Suit)
-       .Where(g => g.Count() >= 5)
-       .Any();
     }
+
+    public override bool Verify => Cards.GroupBy(h => h.Suit)
+        .Where(g => g.Count() >= 5)
+        .Any();
 }

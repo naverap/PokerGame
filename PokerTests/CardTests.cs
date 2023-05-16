@@ -4,6 +4,20 @@
 public class CardTests
 {
     [DataTestMethod]
+    [DataRow(CardSuit.Clubs, CardValue.Two, 0)]
+    [DataRow(CardSuit.Clubs, CardValue.Ace, 12)]
+    [DataRow(CardSuit.Diamonds, CardValue.Two, 13)]
+    [DataRow(CardSuit.Spades, CardValue.Ace, 51)]
+    public void CardId(CardSuit suit, CardValue value, int id)
+    {
+        var card = new Card(suit, value);
+        Assert.AreEqual(id, card.Id);
+        card = new Card(id);
+        Assert.AreEqual(suit, card.Suit);
+        Assert.AreEqual(value, card.Value);
+    }
+
+    [DataTestMethod]
     [DataRow(CardSuit.Hearts, CardValue.Five, "five_of_hearts")]
     [DataRow(CardSuit.Clubs, CardValue.Ace, "ace_of_clubs")]
     public void CardName(CardSuit suit, CardValue value, string name)
