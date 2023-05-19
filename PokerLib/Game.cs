@@ -21,6 +21,7 @@ public class Game
     public int CurrentPlayerIndex { get; set; }
     public bool IsOngoing { get; set; }
     public bool CanJoin => Players.Count < MaxPlayers && !IsOngoing;
+    public bool HasPlayer(string playerName) => Players.Any(p => p.Name == playerName);
 
     public Game()
     {
@@ -75,7 +76,6 @@ public class Game
         player.Cards = TakeCardsFromGameDeck(2);
         Players.Add(player);
         CurrentPlayer ??= Players.First();
-
     }
 
     public void DealFirstRound()
@@ -177,7 +177,33 @@ public class Game
     //    return winners;
     //}
 
-    public void AllIn()
+    public static Hand CreatePlayerHand(Player p)
+    {
+        Card[] c1 = new Card[7];
+        
+            for (int i = 0; i < 5; i++)
+            {
+                c1[i] = TableCards[i];
+               
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                c1[i + 5] = p.Cards[i];
+                
+            }
+
+            Hand h = Hand.CreateHand(c1);
+            return h;
+    }
+    
+
+    public static Player CheckWinner()
+    {
+        Hand Player1Hand = CreatePlayerHand()
+    }
+
+
+        public void AllIn()
     {
         var value = CurrentPlayer.Pot;
         BetOld(value);

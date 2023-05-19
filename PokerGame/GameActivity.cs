@@ -16,6 +16,8 @@ using Java.Util;
 using PokerLib;
 using Android.Gms.Tasks;
 using System.Text.Json;
+using System.Threading;
+using Android.Views.Animations;
 
 namespace PokerGame
 {
@@ -33,9 +35,14 @@ namespace PokerGame
         EditText et;
         public static bool Player1HasMoney = true, Player2HasMoney = true, FirstRoundWasPlayed = false, SecondRoundWasPlayed = false, ThirdRoundWasPlayed = false, fourthfRoundWasPlayed = false, didPlayerOneWin = false, didPlayerTwoWin = false;
         public static Game MyGame;
+        public static string GameId;
         Player CurrentPlayer => MyGame.CurrentPlayer;
         Player p1 => MyGame.Players[0];
         Player p2 => MyGame.Players[1];
+        const string playerName = "nave";
+        System.Threading.Timer getGameUpdatesTimer;
+        AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+        Animation CardFlip;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -68,38 +75,45 @@ namespace PokerGame
 
             Repository.GamesCollection.Get().AddOnSuccessListener(this);
 
-            //MyGame = Game.CreateGame(1, 1000);
-            //Repository.UploadGame(MyGame);
-
-            //if (Intent.GetIntExtra("PlayerId", 1) == 1)
-            //{
-            //    MyGame = CreateGame();
-            //}
         }
 
         public void OnSuccess(Java.Lang.Object result)
         {
-            var snapshot = (QuerySnapshot)result;
-            foreach (var document in snapshot.Documents)
-            {
-                var data = document.Get("data").ToString();
-                var game = JsonSerializer.Deserialize<Game>(data);
-                if (game.CanJoin)
-                {
-                    MyGame = game;
-                    break;
-                }
-            }
+            if (result is QuerySnapshot query)
+                OnGetGames(query);
+            else if (result is DocumentSnapshot document)
+                OnGetGame(document);
+        }
+
+        void OnGetGames(QuerySnapshot query)
+        {
+            var games = query.Documents.Select(doc => Repository.GetGame(doc));
+
+            MyGame = games.FirstOrDefault(g => g.HasPlayer(playerName));
+
             if (MyGame == null)
             {
-                MyGame = Game.CreateGame();
+                // join an available game or create a new game
+                MyGame = games.FirstOrDefault(g => g.CanJoin) ?? Game.CreateGame();
+                Player me = new Player(playerName, 1000, false);
+                MyGame.AddPlayer(me);
                 Repository.UploadGame(MyGame);
             }
 
-            Player me = new Player(1000, false);
-            MyGame.AddPlayer(me);
+            Repository.gameId ??= MyGame.Id.ToString();
+            getGameUpdatesTimer ??= new System.Threading.Timer(OnGetGameUpdatesTimer, autoResetEvent, 2000, 10000);
 
+        }
+
+        void OnGetGame(DocumentSnapshot document)
+        {
+            MyGame = Repository.GetGame(document);
             DrawCards(MyGame.CurrentRound, MyGame.CurrentPlayer);
+        }
+
+        public void OnGetGameUpdatesTimer(Object stateInfo)
+        {
+            Repository.GameDocument.Get().AddOnSuccessListener(this);
         }
 
         protected override void OnStart()
@@ -111,6 +125,7 @@ namespace PokerGame
         void AllIn_Click(object sender, EventArgs e)
         {
             MyGame.AllIn();
+            Repository.UploadGame(MyGame);
         }
 
         void RaisePot_Click(object sender, EventArgs e)
@@ -169,8 +184,8 @@ namespace PokerGame
 
         public void GameLoop()
         {
-            if (MyGame == null ) return;
-            DrawCards(MyGame.CurrentRound, MyGame.CurrentPlayer);
+            if (MyGame == null) return;
+            //DrawCards(MyGame.CurrentRound, MyGame.CurrentPlayer);
 
             //textview1.Text = MyGame.Players[0].Pot.ToString();
             //textview2.Text = MyGame.Players[1].Pot.ToString();
@@ -231,211 +246,58 @@ namespace PokerGame
             StartActivity(Intent);
         }
 
+        void DrawCard(string cardName, int left, int top)
+        {
+            var layoutParams = new RelativeLayout.LayoutParams(200, 200);
+            layoutParams.SetMargins(left, top, 0, 0);
+            var imageView = new ImageView(this) { LayoutParameters = layoutParams };
+            imageView.SetImageResource(Resources.GetIdentifier(cardName, "drawable", PackageName));
+            rl2.AddView(imageView);
+        }
+
         void DrawCards(int round, Player player)
         {
-            int imgkey1, imgkey2, imgkey3, imgkey4, imgkey5, imgkey6, imgkey7;
-            if (round == 1)
-            {
-                img1 = new ImageView(this);
-                img2 = new ImageView(this);
-                RelativeLayout.LayoutParams ivparams = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams2 = new RelativeLayout.LayoutParams(200, 200);
-                ivparams.SetMargins(350, 350, 0, 0);
-                ivparams2.SetMargins(370, 350, 0, 0);
-                img1.LayoutParameters = ivparams;
-                img2.LayoutParameters = ivparams2;
-                rl2.AddView(img1);
-                rl2.AddView(img2);
-                var card1 = MyGame.Players[player.Id].Cards[0].Name;
-                var card2 = MyGame.Players[player.Id].Cards[1].Name;
-                imgkey1 = Resources.GetIdentifier(card1, "drawable", PackageName);
-                imgkey2 = Resources.GetIdentifier(card2, "drawable", PackageName);
-                img1.SetImageResource(imgkey1);
-                img2.SetImageResource(imgkey2);
-            }
-            else if (round == 2)
-            {
-                img1 = new ImageView(this);
-                img2 = new ImageView(this);
-                img3 = new ImageView(this);
-                img4 = new ImageView(this);
-                img5 = new ImageView(this);
-                RelativeLayout.LayoutParams ivparams = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams2 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams3 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams4 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams5 = new RelativeLayout.LayoutParams(200, 200);
-                ivparams.SetMargins(350, 350, 0, 0);
-                ivparams2.SetMargins(370, 350, 0, 0);
-                ivparams3.SetMargins(550, 400, 0, 0);
-                ivparams4.SetMargins(720, 400, 0, 0);
-                ivparams5.SetMargins(890, 400, 0, 0);
-                img1.LayoutParameters = ivparams;
-                img2.LayoutParameters = ivparams2;
-                img3.LayoutParameters = ivparams3;
-                img4.LayoutParameters = ivparams4;
-                img5.LayoutParameters = ivparams5;
-                this.rl2.AddView(img1);
-                this.rl2.AddView(img2);
-                this.rl2.AddView(img3);
-                this.rl2.AddView(img4);
-                this.rl2.AddView(img5);
-                string str = "";
-                string str2 = "";
-                if (player.Id == p1.Id)
-                {
-                    str = MyGame.Players[0].Cards[0].Name;
-                    str = MyGame.Players[0].Cards[1].Name;
-                }
-                else
-                {
-                    str = MyGame.Players[1].Cards[0].Name;
-                    str2 = MyGame.Players[1].Cards[1].Name;
-                }
-                string str3 = MyGame.TableCards[0].Name;
-                string str4 = MyGame.TableCards[1].Name;
-                string str5 = MyGame.TableCards[2].Name;
-                imgkey1 = Resources.GetIdentifier("" + str, "drawable", this.PackageName);
-                imgkey2 = Resources.GetIdentifier("" + str2, "drawable", this.PackageName);
-                imgkey3 = Resources.GetIdentifier("" + str3, "drawable", this.PackageName);
-                imgkey4 = Resources.GetIdentifier("" + str4, "drawable", this.PackageName);
-                imgkey5 = Resources.GetIdentifier("" + str5, "drawable", this.PackageName);
-                img1.SetImageResource(imgkey1);
-                img2.SetImageResource(imgkey2);
-                img3.SetImageResource(imgkey3);
-                img4.SetImageResource(imgkey4);
-                img5.SetImageResource(imgkey5);
-            }
-            else if (round == 3)
-            {
-                img1 = new ImageView(this);
-                img2 = new ImageView(this);
-                img3 = new ImageView(this);
-                img4 = new ImageView(this);
-                img5 = new ImageView(this);
-                img6 = new ImageView(this);
-                RelativeLayout.LayoutParams ivparams = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams2 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams3 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams4 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams5 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams6 = new RelativeLayout.LayoutParams(200, 200);
-                ivparams.SetMargins(350, 350, 0, 0);
-                ivparams2.SetMargins(370, 350, 0, 0);
-                ivparams3.SetMargins(550, 400, 0, 0);
-                ivparams4.SetMargins(720, 400, 0, 0);
-                ivparams5.SetMargins(890, 400, 0, 0);
-                ivparams6.SetMargins(1060, 400, 0, 0);
-                img1.LayoutParameters = ivparams;
-                img2.LayoutParameters = ivparams2;
-                img3.LayoutParameters = ivparams3;
-                img4.LayoutParameters = ivparams4;
-                img5.LayoutParameters = ivparams5;
-                img6.LayoutParameters = ivparams6;
-                this.rl2.AddView(img1);
-                this.rl2.AddView(img2);
-                this.rl2.AddView(img3);
-                this.rl2.AddView(img4);
-                this.rl2.AddView(img5);
-                this.rl2.AddView(img6);
-                string str = "";
-                string str2 = "";
-                if (player.Id == p1.Id)
-                {
-                    str = MyGame.Players[0].Cards[0].Name;
-                    str = MyGame.Players[0].Cards[1].Name;
-                }
-                else
-                {
-                    str = MyGame.Players[1].Cards[0].Name;
-                    str2 = MyGame.Players[1].Cards[1].Name;
-                }
-                string str3 = MyGame.TableCards[0].Name;
-                string str4 = MyGame.TableCards[1].Name;
-                string str5 = MyGame.TableCards[2].Name;
-                string str6 = MyGame.TableCards[3].Name;
-                imgkey1 = Resources.GetIdentifier("" + str, "drawable", this.PackageName);
-                imgkey2 = Resources.GetIdentifier("" + str2, "drawable", this.PackageName);
-                imgkey3 = Resources.GetIdentifier("" + str3, "drawable", this.PackageName);
-                imgkey4 = Resources.GetIdentifier("" + str4, "drawable", this.PackageName);
-                imgkey5 = Resources.GetIdentifier("" + str5, "drawable", this.PackageName);
-                imgkey6 = Resources.GetIdentifier("" + str6, "drawable", this.PackageName);
-                img1.SetImageResource(imgkey1);
-                img2.SetImageResource(imgkey2);
-                img3.SetImageResource(imgkey3);
-                img4.SetImageResource(imgkey4);
-                img5.SetImageResource(imgkey5);
-                img6.SetImageResource(imgkey6);
-            }
-            else
-            {
-                img1 = new ImageView(this);
-                img2 = new ImageView(this);
-                img3 = new ImageView(this);
-                img4 = new ImageView(this);
-                img5 = new ImageView(this);
-                img6 = new ImageView(this);
-                img7 = new ImageView(this);
-                RelativeLayout.LayoutParams ivparams = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams2 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams3 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams4 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams5 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams6 = new RelativeLayout.LayoutParams(200, 200);
-                RelativeLayout.LayoutParams ivparams7 = new RelativeLayout.LayoutParams(200, 200);
-                ivparams.SetMargins(350, 350, 0, 0);
-                ivparams2.SetMargins(370, 350, 0, 0);
-                ivparams3.SetMargins(550, 400, 0, 0);
-                ivparams4.SetMargins(720, 400, 0, 0);
-                ivparams5.SetMargins(890, 400, 0, 0);
-                ivparams6.SetMargins(1060, 400, 0, 0);
-                ivparams7.SetMargins(1230, 400, 0, 0);
-                img1.LayoutParameters = ivparams;
-                img2.LayoutParameters = ivparams2;
-                img3.LayoutParameters = ivparams3;
-                img4.LayoutParameters = ivparams4;
-                img5.LayoutParameters = ivparams5;
-                img6.LayoutParameters = ivparams6;
-                img7.LayoutParameters = ivparams7;
-                this.rl2.AddView(img1);
-                this.rl2.AddView(img2);
-                this.rl2.AddView(img3);
-                this.rl2.AddView(img4);
-                this.rl2.AddView(img5);
-                this.rl2.AddView(img6);
-                this.rl2.AddView(img7);
-                string str = "";
-                string str2 = "";
-                if (player.Id == p1.Id)
-                {
-                    str = MyGame.Players[0].Cards[0].Name;
-                    str = MyGame.Players[0].Cards[1].Name;
-                }
-                else
-                {
-                    str = MyGame.Players[1].Cards[0].Name;
-                    str2 = MyGame.Players[1].Cards[1].Name;
-                }
-                string str3 = MyGame.TableCards[0].Name;
-                string str4 = MyGame.TableCards[1].Name;
-                string str5 = MyGame.TableCards[2].Name;
-                string str6 = MyGame.TableCards[3].Name;
-                string str7 = MyGame.TableCards[4].Name;
-                imgkey1 = Resources.GetIdentifier("" + str, "drawable", this.PackageName);
-                imgkey2 = Resources.GetIdentifier("" + str2, "drawable", this.PackageName);
-                imgkey3 = Resources.GetIdentifier("" + str3, "drawable", this.PackageName);
-                imgkey4 = Resources.GetIdentifier("" + str4, "drawable", this.PackageName);
-                imgkey5 = Resources.GetIdentifier("" + str5, "drawable", this.PackageName);
-                imgkey6 = Resources.GetIdentifier("" + str6, "drawable", this.PackageName);
-                imgkey7 = Resources.GetIdentifier("" + str7, "drawable", this.PackageName);
-                img1.SetImageResource(imgkey1);
-                img2.SetImageResource(imgkey2);
-                img3.SetImageResource(imgkey3);
-                img4.SetImageResource(imgkey4);
-                img5.SetImageResource(imgkey5);
-                img6.SetImageResource(imgkey6);
-                img7.SetImageResource(imgkey7);
-            }
+            var playerCards = MyGame.Players[player.Id].Cards;
+            DrawCard(playerCards[0].Name, 350, 350);
+            DrawCard(playerCards[1].Name, 370, 350);
+
+            var upsidedown = "upsidedowncard";
+            var tableCards = MyGame.TableCards;
+            var cardName0 = round >= 2 ? tableCards[0].Name : upsidedown;
+            var cardName1 = round >= 2 ? tableCards[1].Name : upsidedown;
+            var cardName2 = round >= 2 ? tableCards[2].Name : upsidedown;
+            var cardName3 = round >= 3 ? tableCards[3].Name : upsidedown;
+            var cardName4 = round >= 4 ? tableCards[4].Name : upsidedown;
+            DrawCard(cardName0, 550, 400);
+            DrawCard(cardName1, 720, 400);
+            DrawCard(cardName2, 890, 400);
+            DrawCard(cardName3, 1060, 400);
+            DrawCard(cardName4, 1230, 400);
+
+            //if (round == 1)
+            //{
+            //}
+            //else if (round == 2)
+            //{
+            //    DrawCard(tableCards[0], 550, 400);
+            //    DrawCard(tableCards[1], 720, 400);
+            //    DrawCard(tableCards[2], 890, 400);
+            //}
+            //else if (round == 3)
+            //{
+            //    DrawCard(tableCards[0], 550, 400);
+            //    DrawCard(tableCards[1], 720, 400);
+            //    DrawCard(tableCards[2], 890, 400);
+            //    DrawCard(tableCards[3], 1060, 400);
+            //}
+            //else
+            //{
+            //    DrawCard(tableCards[0], 550, 400);
+            //    DrawCard(tableCards[1], 720, 400);
+            //    DrawCard(tableCards[2], 890, 400);
+            //    DrawCard(tableCards[3], 1060, 400);
+            //    DrawCard(tableCards[4], 1230, 400);
+            //}
         }
     }
 }

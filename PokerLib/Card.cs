@@ -8,18 +8,16 @@ public struct Card
     public int Id { get; set; }
 
     [JsonIgnore]
-    public CardSuit Suit => (CardSuit)(Id / 13);
+    public readonly CardSuit Suit => (CardSuit)(Id / 13);
 
     [JsonIgnore]
-    public CardValue Value => (CardValue)(Id % 13 + 2);
+    public readonly CardValue Value => (CardValue)(Id % 13 + 2);
 
     [JsonIgnore]
-    public string Name => $"{Value}_of_{Suit}".ToLowerInvariant();
+    public readonly string Name => $"{Value}_of_{Suit}".ToLowerInvariant();
 
     [JsonIgnore]
-    public string DisplayName => GetDisplayName();
-
-    static readonly char[] SuitChars = new[] { '♣', '♢', '♡', '♠' };
+    public readonly string DisplayName => GetDisplayName();
 
     public Card(CardSuit suit, CardValue value)
     {
@@ -31,7 +29,9 @@ public struct Card
         Id = id;
     }
 
-    string GetDisplayName()
+    static readonly char[] SuitChars = new[] { '♣', '♢', '♡', '♠' };
+
+    readonly string GetDisplayName()
     {
         var suitChar = SuitChars[(int)Suit];
         var valueName = Value <= CardValue.Ten

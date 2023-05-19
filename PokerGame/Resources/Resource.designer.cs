@@ -14,7 +14,7 @@ namespace PokerGame
 {
 	
 	
-	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Xamarin.Android.Build.Tasks", "13.2.0.93")]
+	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Xamarin.Android.Build.Tasks", "13.2.0.99")]
 	public partial class Resource
 	{
 		
@@ -294,58 +294,61 @@ namespace PokerGame
 			public const int btn_radio_to_on_mtrl_ring_outer_path_animation = 2130771991;
 			
 			// aapt resource value: 0x7F010018
-			public const int design_bottom_sheet_slide_in = 2130771992;
+			public const int CardFlipAnimation = 2130771992;
 			
 			// aapt resource value: 0x7F010019
-			public const int design_bottom_sheet_slide_out = 2130771993;
+			public const int design_bottom_sheet_slide_in = 2130771993;
 			
 			// aapt resource value: 0x7F01001A
-			public const int design_snackbar_in = 2130771994;
+			public const int design_bottom_sheet_slide_out = 2130771994;
 			
 			// aapt resource value: 0x7F01001B
-			public const int design_snackbar_out = 2130771995;
+			public const int design_snackbar_in = 2130771995;
 			
 			// aapt resource value: 0x7F01001C
-			public const int fragment_fast_out_extra_slow_in = 2130771996;
+			public const int design_snackbar_out = 2130771996;
 			
 			// aapt resource value: 0x7F01001D
-			public const int linear_indeterminate_line1_head_interpolator = 2130771997;
+			public const int fragment_fast_out_extra_slow_in = 2130771997;
 			
 			// aapt resource value: 0x7F01001E
-			public const int linear_indeterminate_line1_tail_interpolator = 2130771998;
+			public const int linear_indeterminate_line1_head_interpolator = 2130771998;
 			
 			// aapt resource value: 0x7F01001F
-			public const int linear_indeterminate_line2_head_interpolator = 2130771999;
+			public const int linear_indeterminate_line1_tail_interpolator = 2130771999;
 			
 			// aapt resource value: 0x7F010020
-			public const int linear_indeterminate_line2_tail_interpolator = 2130772000;
+			public const int linear_indeterminate_line2_head_interpolator = 2130772000;
 			
 			// aapt resource value: 0x7F010021
-			public const int m3_bottom_sheet_slide_in = 2130772001;
+			public const int linear_indeterminate_line2_tail_interpolator = 2130772001;
 			
 			// aapt resource value: 0x7F010022
-			public const int m3_bottom_sheet_slide_out = 2130772002;
+			public const int m3_bottom_sheet_slide_in = 2130772002;
 			
 			// aapt resource value: 0x7F010023
-			public const int m3_motion_fade_enter = 2130772003;
+			public const int m3_bottom_sheet_slide_out = 2130772003;
 			
 			// aapt resource value: 0x7F010024
-			public const int m3_motion_fade_exit = 2130772004;
+			public const int m3_motion_fade_enter = 2130772004;
 			
 			// aapt resource value: 0x7F010025
-			public const int m3_side_sheet_slide_in = 2130772005;
+			public const int m3_motion_fade_exit = 2130772005;
 			
 			// aapt resource value: 0x7F010026
-			public const int m3_side_sheet_slide_out = 2130772006;
+			public const int m3_side_sheet_slide_in = 2130772006;
 			
 			// aapt resource value: 0x7F010027
-			public const int mtrl_bottom_sheet_slide_in = 2130772007;
+			public const int m3_side_sheet_slide_out = 2130772007;
 			
 			// aapt resource value: 0x7F010028
-			public const int mtrl_bottom_sheet_slide_out = 2130772008;
+			public const int mtrl_bottom_sheet_slide_in = 2130772008;
 			
 			// aapt resource value: 0x7F010029
-			public const int mtrl_card_lowers_interpolator = 2130772009;
+			public const int mtrl_bottom_sheet_slide_out = 2130772009;
+			
+			// aapt resource value: 0x7F01002A
+			public const int mtrl_card_lowers_interpolator = 2130772010;
 			
 			static Animation()
 			{
