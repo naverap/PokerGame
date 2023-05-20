@@ -177,33 +177,33 @@ public class Game
     //    return winners;
     //}
 
-    public static Hand CreatePlayerHand(Player p)
-    {
-        Card[] c1 = new Card[7];
-        
-            for (int i = 0; i < 5; i++)
-            {
-                c1[i] = TableCards[i];
-               
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                c1[i + 5] = p.Cards[i];
-                
-            }
+    //public static Hand CreatePlayerHand(Player p)
+    //{
+    //    Card[] c1 = new Card[7];
 
-            Hand h = Hand.CreateHand(c1);
-            return h;
-    }
-    
+    //    for (int i = 0; i < 5; i++)
+    //    {
+    //        c1[i] = TableCards[i];
 
-    public static Player CheckWinner()
-    {
-        Hand Player1Hand = CreatePlayerHand()
-    }
+    //    }
+    //    for (int i = 0; i < 2; i++)
+    //    {
+    //        c1[i + 5] = p.Cards[i];
+
+    //    }
+
+    //    Hand h = Hand.CreateHand(c1);
+    //    return h;
+    //}
 
 
-        public void AllIn()
+    //public static Player CheckWinner()
+    //{
+    //    Hand Player1Hand = CreatePlayerHand()
+    //}
+
+
+    public void AllIn()
     {
         var value = CurrentPlayer.Pot;
         BetOld(value);
