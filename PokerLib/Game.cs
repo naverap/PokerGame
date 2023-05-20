@@ -177,27 +177,10 @@ public class Game
     //    return winners;
     //}
 
-    //public static Hand CreatePlayerHand(Player p)
-    //{
-    //    Card[] c1 = new Card[7];
+    public Hand CreatePlayerHand(Player p)
+        => Hand.CreateHand(TableCards.Concat(p.Cards).ToArray());
 
-    //    for (int i = 0; i < 5; i++)
-    //    {
-    //        c1[i] = TableCards[i];
-
-    //    }
-    //    for (int i = 0; i < 2; i++)
-    //    {
-    //        c1[i + 5] = p.Cards[i];
-
-    //    }
-
-    //    Hand h = Hand.CreateHand(c1);
-    //    return h;
-    //}
-
-
-    //public static Player CheckWinner()
+    //public Player CheckWinner()
     //{
     //    Hand Player1Hand = CreatePlayerHand()
     //}

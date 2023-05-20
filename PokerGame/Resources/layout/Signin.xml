@@ -6,7 +6,7 @@
    android:padding="16dp"
    android:gravity="center_horizontal"
    android:background="@color/colorPrimary">
-    <!--
+    
    <ImageView
        android:layout_width="96dp"
        android:layout_height="96dp"
@@ -59,15 +59,6 @@
        android:elevation="4dp" />
 
    <TextView
-       android:id="@+id/forgotPasswordTextView"
-       android:layout_marginTop="24dp"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:text="Forgot Password?"
-       android:textColor="@color/colorAccent"
-       android:textSize="16sp" />
-
-   <TextView
        android:id="@+id/signupTextView"
        android:layout_marginTop="24dp"
        android:layout_width="wrap_content"
@@ -75,5 +66,5 @@
        android:text="Don't have an account? Sign up"
        android:textColor="#CCCCCC"
        android:textSize="16sp" />
-    -->
+    
 </LinearLayout>

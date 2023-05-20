@@ -6,7 +6,7 @@
    android:padding="16dp"
    android:gravity="center_horizontal"
    android:background="@color/colorPrimary">
-    <!--
+    
    <ImageView
        android:layout_width="96dp"
        android:layout_height="96dp"
@@ -16,7 +16,7 @@
        android:layout_marginTop="24dp"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:text="Sign In"
+       android:text="Sign Up"
        android:textSize="24sp"
        android:textStyle="bold"
        android:textColor="@android:color/white" />
@@ -100,5 +100,5 @@
        android:text="Already have an account? Sign in"
        android:textColor="#CCCCCC"
        android:textSize="16sp" />
-    -->
+   
 </LinearLayout>

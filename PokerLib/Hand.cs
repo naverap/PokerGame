@@ -37,13 +37,9 @@ public class Hand
         return new HandHighCard(cards);
     }
 
-
-
     public bool IsFlush => Cards.GroupBy(h => h.Suit)
         .Where(g => g.Count() >= 5)
         .Any();
-
-   
 
     protected static bool ContainsStraight(Hand hand)
     {
@@ -83,6 +79,4 @@ public class Hand
         }
         return false;
     }
-
-   
 }
