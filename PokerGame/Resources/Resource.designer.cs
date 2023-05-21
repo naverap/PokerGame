@@ -14,7 +14,7 @@ namespace PokerGame
 {
 	
 	
-	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Xamarin.Android.Build.Tasks", "13.1.99.65")]
+	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Xamarin.Android.Build.Tasks", "13.2.0.99")]
 	public partial class Resource
 	{
 		
@@ -10516,88 +10516,79 @@ namespace PokerGame
 			public const int tv2 = 2131231223;
 			
 			// aapt resource value: 0x7F0801F8
-			public const int tv3 = 2131231224;
+			public const int @unchecked = 2131231224;
 			
 			// aapt resource value: 0x7F0801F9
-			public const int tv4 = 2131231225;
+			public const int uniform = 2131231225;
 			
 			// aapt resource value: 0x7F0801FA
-			public const int tv5 = 2131231226;
+			public const int unlabeled = 2131231226;
 			
 			// aapt resource value: 0x7F0801FB
-			public const int @unchecked = 2131231227;
+			public const int up = 2131231227;
 			
 			// aapt resource value: 0x7F0801FC
-			public const int uniform = 2131231228;
+			public const int useLogo = 2131231228;
 			
 			// aapt resource value: 0x7F0801FD
-			public const int unlabeled = 2131231229;
+			public const int username1 = 2131231229;
 			
 			// aapt resource value: 0x7F0801FE
-			public const int up = 2131231230;
+			public const int vertical_only = 2131231230;
 			
 			// aapt resource value: 0x7F0801FF
-			public const int useLogo = 2131231231;
+			public const int view_offset_helper = 2131231231;
 			
 			// aapt resource value: 0x7F080200
-			public const int username1 = 2131231232;
+			public const int view_transition = 2131231232;
 			
 			// aapt resource value: 0x7F080201
-			public const int vertical_only = 2131231233;
+			public const int view_tree_lifecycle_owner = 2131231233;
 			
 			// aapt resource value: 0x7F080202
-			public const int view_offset_helper = 2131231234;
+			public const int view_tree_on_back_pressed_dispatcher_owner = 2131231234;
 			
 			// aapt resource value: 0x7F080203
-			public const int view_transition = 2131231235;
+			public const int view_tree_saved_state_registry_owner = 2131231235;
 			
 			// aapt resource value: 0x7F080204
-			public const int view_tree_lifecycle_owner = 2131231236;
+			public const int view_tree_view_model_store_owner = 2131231236;
 			
 			// aapt resource value: 0x7F080205
-			public const int view_tree_on_back_pressed_dispatcher_owner = 2131231237;
+			public const int visible = 2131231237;
 			
 			// aapt resource value: 0x7F080206
-			public const int view_tree_saved_state_registry_owner = 2131231238;
+			public const int visible_removing_fragment_view_tag = 2131231238;
 			
 			// aapt resource value: 0x7F080207
-			public const int view_tree_view_model_store_owner = 2131231239;
+			public const int west = 2131231239;
 			
 			// aapt resource value: 0x7F080208
-			public const int visible = 2131231240;
-			
-			// aapt resource value: 0x7F080209
-			public const int visible_removing_fragment_view_tag = 2131231241;
-			
-			// aapt resource value: 0x7F08020A
-			public const int west = 2131231242;
+			public const int wide = 2131231240;
 			
 			// aapt resource value: 0x7F08020B
-			public const int wide = 2131231243;
+			public const int withinBounds = 2131231243;
 			
-			// aapt resource value: 0x7F08020E
-			public const int withinBounds = 2131231246;
+			// aapt resource value: 0x7F080209
+			public const int withText = 2131231241;
+			
+			// aapt resource value: 0x7F08020A
+			public const int with_icon = 2131231242;
 			
 			// aapt resource value: 0x7F08020C
-			public const int withText = 2131231244;
+			public const int wrap = 2131231244;
 			
 			// aapt resource value: 0x7F08020D
-			public const int with_icon = 2131231245;
+			public const int wrap_content = 2131231245;
+			
+			// aapt resource value: 0x7F08020E
+			public const int wrap_content_constrained = 2131231246;
 			
 			// aapt resource value: 0x7F08020F
-			public const int wrap = 2131231247;
+			public const int x_left = 2131231247;
 			
 			// aapt resource value: 0x7F080210
-			public const int wrap_content = 2131231248;
-			
-			// aapt resource value: 0x7F080211
-			public const int wrap_content_constrained = 2131231249;
-			
-			// aapt resource value: 0x7F080212
-			public const int x_left = 2131231250;
-			
-			// aapt resource value: 0x7F080213
-			public const int x_right = 2131231251;
+			public const int x_right = 2131231248;
 			
 			static Id()
 			{
@@ -11206,13 +11197,7 @@ namespace PokerGame
 			public const int select_dialog_singlechoice_material = 2131427437;
 			
 			// aapt resource value: 0x7F0B006E
-			public const int Signin = 2131427438;
-			
-			// aapt resource value: 0x7F0B006F
-			public const int Signup = 2131427439;
-			
-			// aapt resource value: 0x7F0B0070
-			public const int support_simple_spinner_dropdown_item = 2131427440;
+			public const int support_simple_spinner_dropdown_item = 2131427438;
 			
 			static Layout()
 			{

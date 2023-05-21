@@ -1,4 +1,6 @@
-﻿namespace PokerLib;
+﻿using System.Collections.Generic;
+
+namespace PokerLib;
 
 public class Player
 {
@@ -7,7 +9,7 @@ public class Player
     public int Pot { get; set; }
     public int CurrentBet { get; set; }
     public bool HasFolded { get; set; }
-    public Card[] Cards { get; set; }
+    public List<Card> Cards { get; set; }
     public bool HasWon { get; set; }
 
     public Player() { }

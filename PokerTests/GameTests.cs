@@ -8,7 +8,7 @@ public class GameTests
     [TestMethod]
     public void CreateGame()
     {
-        var game = Game.CreateGame();
+        var game = new Game();
         game.AddPlayer(new Player("test", 1000, false));
         game.AddPlayer(new Player("test", 1000, false));
         Assert.AreEqual(2, game.Players.Count);
@@ -21,7 +21,7 @@ public class GameTests
     [TestMethod]
     public void SerializeGame()
     {
-        var game = Game.CreateGame();
+        var game = new Game();
         game.AddPlayer(new Player("test", 1000, false));
         game.AddPlayer(new Player("test", 1000, false));
         //Console.WriteLine(JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true }));
