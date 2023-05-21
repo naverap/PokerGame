@@ -26,11 +26,9 @@ namespace PokerGame
      ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape)]
     public class GameActivity : Activity, IOnSuccessListener
     {
-        Button btn1, btnhome, btngame, btnsettings, btnfold, btncheck, btnraise, raise25, raise50, raisePot, AllIn, submitRaise;
+        Button raise25, raise50, raisePot, AllIn, submitRaise;
         Dialog d, RaiseDialog;
         FrameLayout container;
-        ImageView img1, img2, img3, img4, img5, img6, img7;
-        TextView textview1, textview2, textview3, textview4, textview5;
         RelativeLayout rl2;
         EditText et;
         public static bool Player1HasMoney = true, Player2HasMoney = true, FirstRoundWasPlayed = false, SecondRoundWasPlayed = false, ThirdRoundWasPlayed = false, fourthfRoundWasPlayed = false, didPlayerOneWin = false, didPlayerTwoWin = false;
@@ -52,29 +50,28 @@ namespace PokerGame
             SetContentView(Resource.Layout.Game);
 
             rl2 = (RelativeLayout)FindViewById(Resource.Id.relativeLayout2);
-            textview1 = (TextView)FindViewById(Resource.Id.tv1);
-            btnfold = (Button)FindViewById(Resource.Id.foldbtn);
-            btncheck = (Button)FindViewById(Resource.Id.checkbtn);
-            btnraise = (Button)FindViewById(Resource.Id.raisebtn);
-            textview2 = (TextView)FindViewById(Resource.Id.tv2);
-            textview3 = (TextView)FindViewById(Resource.Id.tv3);
-            btn1 = (Button)FindViewById(Resource.Id.menubtn2);
-            textview4 = (TextView)FindViewById(Resource.Id.tv4);
-            textview5 = (TextView)FindViewById(Resource.Id.tv5);
-            textview4.Visibility = ViewStates.Invisible;
-            textview5.Visibility = ViewStates.Invisible; ;
-            btn1.Click += Btn1_Click;
-            btnfold.Click += Btnfold_Click;
-            btncheck.Click += Btncheck_Click;
-            btnraise.Click += Btnraise_Click;
-            container = (FrameLayout)FindViewById(Resource.Id.GameContainer);
+            //textview1 = (TextView)FindViewById(Resource.Id.tv1);
+            //textview2 = (TextView)FindViewById(Resource.Id.tv2);
+            //textview3 = (TextView)FindViewById(Resource.Id.tv3);
+            //textview4 = (TextView)FindViewById(Resource.Id.tv4);
+            //textview5 = (TextView)FindViewById(Resource.Id.tv5);
+            //textview4.Visibility = ViewStates.Invisible;
+            //textview5.Visibility = ViewStates.Invisible; ;
 
+            var btnmenu = (Button)FindViewById(Resource.Id.menubtn2);
+            btnmenu.Click += Btnmenu_Click;
+            var btnfold = (Button)FindViewById(Resource.Id.foldbtn);
+            btnfold.Click += Btnfold_Click;
+            var btncheck = (Button)FindViewById(Resource.Id.checkbtn);
+            btncheck.Click += Btncheck_Click;
+            var btnraise = (Button)FindViewById(Resource.Id.raisebtn);
+            btnraise.Click += Btnraise_Click;
+
+            container = (FrameLayout)FindViewById(Resource.Id.GameContainer);
             container.AddView(new PokerTableView(this));
 
             Repository.Init(this);
-
             Repository.GamesCollection.Get().AddOnSuccessListener(this);
-
         }
 
         public void OnSuccess(Java.Lang.Object result)
@@ -94,7 +91,7 @@ namespace PokerGame
             if (MyGame == null)
             {
                 // join an available game or create a new game
-                MyGame = games.FirstOrDefault(g => g.CanJoin) ?? Game.CreateGame();
+                MyGame = games.FirstOrDefault(g => g.CanJoin) ?? new Game();
                 Player me = new Player(playerName, 1000, false);
                 MyGame.AddPlayer(me);
                 Repository.UploadGame(MyGame);
@@ -218,19 +215,19 @@ namespace PokerGame
             //MyGame.SetNextPlayerTurn();
         }
 
-        void Btn1_Click(object sender, EventArgs e)
+        void Btnmenu_Click(object sender, EventArgs e)
         {
             d = new Dialog(this);
             d.SetContentView(Resource.Layout.MenuPopUp);
             d.SetTitle("MENU");
             d.SetCancelable(true);
 
-            btngame = (Button)d.FindViewById(Resource.Id.gamebtn);
-            btnhome = (Button)d.FindViewById(Resource.Id.homebtn);
-            btnsettings = (Button)d.FindViewById(Resource.Id.settingbtn);
-
+            var btngame = (Button)d.FindViewById(Resource.Id.gamebtn);
             btngame.Click += Btngame_Click;
+            var btnhome = (Button)d.FindViewById(Resource.Id.homebtn);
             btnhome.Click += Btnhome_Click;
+            var btnsettings = (Button)d.FindViewById(Resource.Id.settingbtn);
+
             d.Show();
         }
 
@@ -262,42 +259,17 @@ namespace PokerGame
             DrawCard(playerCards[1].Name, 370, 350);
 
             var upsidedown = "upsidedowncard";
-            var tableCards = MyGame.TableCards;
-            var cardName0 = round >= 2 ? tableCards[0].Name : upsidedown;
-            var cardName1 = round >= 2 ? tableCards[1].Name : upsidedown;
-            var cardName2 = round >= 2 ? tableCards[2].Name : upsidedown;
-            var cardName3 = round >= 3 ? tableCards[3].Name : upsidedown;
-            var cardName4 = round >= 4 ? tableCards[4].Name : upsidedown;
+            var communityCards = MyGame.CommunityCards;
+            var cardName0 = round >= 2 ? communityCards[0].Name : upsidedown;
+            var cardName1 = round >= 2 ? communityCards[1].Name : upsidedown;
+            var cardName2 = round >= 2 ? communityCards[2].Name : upsidedown;
+            var cardName3 = round >= 3 ? communityCards[3].Name : upsidedown;
+            var cardName4 = round >= 4 ? communityCards[4].Name : upsidedown;
             DrawCard(cardName0, 550, 400);
             DrawCard(cardName1, 720, 400);
             DrawCard(cardName2, 890, 400);
             DrawCard(cardName3, 1060, 400);
             DrawCard(cardName4, 1230, 400);
-
-            //if (round == 1)
-            //{
-            //}
-            //else if (round == 2)
-            //{
-            //    DrawCard(tableCards[0], 550, 400);
-            //    DrawCard(tableCards[1], 720, 400);
-            //    DrawCard(tableCards[2], 890, 400);
-            //}
-            //else if (round == 3)
-            //{
-            //    DrawCard(tableCards[0], 550, 400);
-            //    DrawCard(tableCards[1], 720, 400);
-            //    DrawCard(tableCards[2], 890, 400);
-            //    DrawCard(tableCards[3], 1060, 400);
-            //}
-            //else
-            //{
-            //    DrawCard(tableCards[0], 550, 400);
-            //    DrawCard(tableCards[1], 720, 400);
-            //    DrawCard(tableCards[2], 890, 400);
-            //    DrawCard(tableCards[3], 1060, 400);
-            //    DrawCard(tableCards[4], 1230, 400);
-            //}
         }
     }
 }

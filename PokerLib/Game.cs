@@ -6,60 +6,36 @@ namespace PokerLib;
 
 public class Game
 {
-    public Guid Id { get; set; }
-    public int MaxPlayers { get; set; }
-    public int Pot { get; set; }
-    public int CurrentDealerLocation { get; }
-    public int CurrentPlayerLocation { get; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public int Pot { get; set; } = 0;
     public int LastBet { get; set; }
-    public int GameDeckIndex { get; set; }
     public int CurrentRound { get; set; }
-    public Card[] Deck { get; set; }
-    public Card[] TableCards { get; set; }
+
+    // Cards
+    public List<Card> Deck { get; set; }
+    public List<Card> CommunityCards { get; set; }
+
+    // Players
+    public int MaxPlayers { get; set; } = 4;
     public List<Player> Players { get; set; }
-    public Player CurrentPlayer { get; set; }
+    public bool HasPlayer(string playerName) => Players.Any(p => p.Name == playerName);
     public int CurrentPlayerIndex { get; set; }
+    public Player CurrentPlayer => Players[CurrentPlayerIndex];
+
+    // Dealer
+    public int DealerIndex { get; set; }
+    public Player Dealer => Players[DealerIndex];
+
     public bool IsOngoing { get; set; }
     public bool CanJoin => Players.Count < MaxPlayers && !IsOngoing;
-    public bool HasPlayer(string playerName) => Players.Any(p => p.Name == playerName);
 
     public Game()
     {
-        MaxPlayers = 4;
         Players = new();
-        GameDeckIndex = 0;
-        CurrentRound = 1;
-        Pot = 0;
-        TableCards = new Card[5];
-        CreateDeck();
-    }
-
-    public static Game CreateGame()
-    {
-        var game = new Game();
-        game.Id = Guid.NewGuid();
-        game.DealCardsToGameCards(5);
-        //game.DealFirstRound();
-        return game;
-    }
-
-    public void CreateDeck()
-    {
-        Deck = new Card[52];
-        int n = 0;
-        CardSuit s;
-        CardValue v;
-        for (int i = 2; i < 15; i++)
-        {
-            v = (CardValue)i;
-            for (int j = 0; j < 4; j++)
-            {
-                s = (CardSuit)j;
-                Deck[n] = new Card(s, v);
-                n++;
-            }
-        }
+        Deck = new Deck();
         Deck.Shuffle();
+        CommunityCards = Deck.Pop(5);
+        CurrentRound = 1;
     }
 
     int GetLowestAvailableId()
@@ -73,38 +49,8 @@ public class Game
     public void AddPlayer(Player player)
     {
         player.Id = GetLowestAvailableId();
-        player.Cards = TakeCardsFromGameDeck(2);
+        player.Cards = Deck.Pop(2);
         Players.Add(player);
-        CurrentPlayer ??= Players.First();
-    }
-
-    public void DealFirstRound()
-    {
-        foreach (var player in Players)
-        {
-            player.Cards = TakeCardsFromGameDeck(2);
-        }
-    }
-
-    public Card[] TakeCardsFromGameDeck(int n)
-    {
-        var cards = new Card[n];
-        for (int i = 0; i < n; i++)
-        {
-            cards[i] = Deck[i + GameDeckIndex];
-        }
-        GameDeckIndex += n;
-        return cards;
-    }
-
-    public void DealCardsToGameCards(int n)
-    {
-        var cards = new Card[n];
-        cards = TakeCardsFromGameDeck(5);
-        for (int i = 0; i < cards.Length; i++)
-        {
-            TableCards[i] = cards[i];
-        }
     }
 
     //public void PayUp()
@@ -178,7 +124,7 @@ public class Game
     //}
 
     public Hand CreatePlayerHand(Player p)
-        => Hand.CreateHand(TableCards.Concat(p.Cards).ToArray());
+        => Hand.CreateHand(CommunityCards.Concat(p.Cards).ToArray());
 
     //public Player CheckWinner()
     //{
@@ -220,7 +166,6 @@ public class Game
         {
             CurrentPlayerIndex = 0;
         }
-        CurrentPlayer = Players[CurrentPlayerIndex];
     }
 
     public bool Bet(Player player, BetType betType, int amount)
