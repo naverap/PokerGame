@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,9 +7,10 @@ namespace PokerLib;
 public class Game
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+    public int Blind { get; set; } = 100;
     public int Pot { get; set; } = 0;
     public int LastBet { get; set; }
-    public int CurrentRound { get; set; }
+    public Round Round { get; set; }
 
     // Cards
     public List<Card> Deck { get; set; }
@@ -36,7 +36,6 @@ public class Game
         Deck = new Deck();
         Deck.Shuffle();
         CommunityCards = Deck.Pop(5);
-        CurrentRound = 1;
     }
 
     int GetLowestAvailableId()
@@ -54,127 +53,32 @@ public class Game
         Players.Add(player);
     }
 
-    //public void PayUp()
-    //{
-    //    Player[] p = CheckWinners();
-    //    int c = 0;
-    //    for (int i = 0; i < p.Length; i++)
-    //    {
-    //        if (p[i] != null)
-    //        {
-    //            c++;
-    //        }
-    //    }
-    //    for (int i = 0; i < c - 1; i++)
-    //    {
-    //        p[i].Pot += Pot / c;
-
-    //    }
-    //    Pot = 0;
-    //}
-
-    //public Player[] CheckWinners()
-    //{
-    //    int n = 0;
-    //    Player[] p = new Player[Players.Count];
-    //    Player[] winners = new Player[Players.Count];
-    //    for (int i = 0; i < Players.Count; i++)
-    //    {
-    //        p[i] = Players[i];
-    //    }
-    //    Hand h1 = new Hand();
-    //    Hand h2 = new Hand();
-    //    Card[] c1 = new Card[7];
-    //    Card[] c2 = new Card[7];
-    //    for (int j = 1; j < p.Length; j++)
-    //    {
-    //        for (int i = 0; i < 5; i++)
-    //        {
-    //            c1[i] = TableCards[i];
-    //            c2[i] = TableCards[i];
-    //        }
-    //        for (int i = 0; i < 2; i++)
-    //        {
-    //            c1[i + 5] = p[j - 1].Cards[i];
-    //            c2[i + 5] = p[j].Cards[i];
-    //        }
-
-    //        h1.Cards = c1;
-    //        h2.Cards = c2;
-    //        if (h1.Strength() > h2.Strength())
-    //        {
-    //            winners[n] = p[j - 1];
-    //            n++;
-    //        }
-    //        if (h1.Strength() < h2.Strength())
-    //        {
-
-    //            winners[n] = p[j];
-    //            n++;
-    //        }
-    //        if (h1.Strength() == h2.Strength())
-    //        {
-    //            winners[n] = p[j - 1];
-    //            winners[n + 1] = p[j];
-    //            n = n + 2;
-    //        }
-    //        p[j] = winners[n - 1];
-
-    //    }
-    //    return winners;
-    //}
-
-    public Hand CreatePlayerHand(Player p)
-        => Hand.CreateHand(CommunityCards.Concat(p.Cards).ToArray());
-
-   
-    
-
-    public Player[] CheckWinner()
+    public Player GetPlayerByName(string playerName)
     {
-        List<Player> Winners = new List<Player>();
+        return Players.SingleOrDefault(p => p.Name == playerName);
+    }
+
+    public void SetAndPayWinners()
+    {
         foreach (Player player in Players)
         {
-            player.PlayerHand  = CreatePlayerHand(player);
+            player.Hand = Hand.CreateHand(CommunityCards.Concat(player.Cards).ToArray());
         }
-        int Player1Strength = Players[0].PlayerHand.Stregth;
-        int Player2Strength = Players[1].PlayerHand.Stregth;
-        if (Player1Strength > Player2Strength) Winners.Add(Players[0]);
-        else if (Player1Strength < Player2Strength)  Winners.Add(Players[1]); 
-        else
+
+        var winners = Players.Where(p => !p.HasFolded)
+            .GroupBy(p => p.Hand.Stregth)
+            .OrderByDescending(g => g.Key)
+            .First();
+
+        var reward = Pot / winners.Count();
+
+        foreach (var player in winners)
         {
-            Winners.Add(Players[0]);
-            Winners.Add(Players[1]);
+            player.HasWon = true;
+            player.Pot += reward;
         }
-        return Winners.ToArray();
-    }
 
-
-    public void AllIn()
-    {
-        var value = CurrentPlayer.Pot;
-        BetOld(value);
-    }
-
-    public void Check()
-    {
-        var value = LastBet;
-        BetOld(value);
-    }
-
-    public void BetPecentage(int percentage)
-    {
-        var value = Pot * percentage / 100;
-        BetOld(value);
-    }
-
-    public void BetOld(int sum)
-    {
-        if (CurrentPlayer.Pot < sum)
-            sum = CurrentPlayer.Pot;
-        LastBet += sum;
-        Pot += sum;
-        CurrentPlayer.Pot -= sum;
+        Pot = 0;
     }
 
     public void SetNextPlayerTurn()
@@ -186,7 +90,34 @@ public class Game
         }
     }
 
-    public bool Bet(Player player, BetType betType, int amount)
+    public bool RoundHasEnded()
+    {
+        foreach (var player in Players)
+        {
+            if (player.LastBetType == BetType.None)
+                return false;
+            if (player.LastBetAmount != LastBet && !player.HasFolded)
+                return false;
+        }
+        return true;
+    }
+
+    public void NextRound()
+    {
+        Round++;
+        LastBet = 0;
+        foreach (var player in Players)
+        {
+            player.LastBetAmount = 0;
+            player.LastBetType = BetType.None;
+        }
+        if (Round == Round.Ended)
+        {
+            SetAndPayWinners();
+        }
+    }
+
+    public bool Bet(Player player, BetType betType, int amount = 0)
     {
         if (player != CurrentPlayer)
             return false;
@@ -198,8 +129,16 @@ public class Game
         if (!isValidBet)
             return false;
 
+        player.LastBetType = betType;
+        player.LastBetAmount = LastBet;
+        if (betType == BetType.Fold)
+            player.LastBetAmount = 0;
+
         do { SetNextPlayerTurn(); }
         while (CurrentPlayer.HasFolded);
+
+        if (RoundHasEnded())
+            NextRound();
 
         return true;
     }
@@ -225,7 +164,12 @@ public class Game
             case BetType.Call:
                 if (LastBet == 0)
                     return false;
-                return MakeBet(player, BetType.Bet, LastBet);
+                amount = LastBet - player.LastBetAmount;
+                if (player.Pot < amount)
+                    return false; // TODO: allow to call and return money to previous betters. Also applicable to all in
+                Pot += amount;
+                player.Pot -= amount;
+                return true;
             case BetType.Raise:
                 if (LastBet == 0)
                     return false;

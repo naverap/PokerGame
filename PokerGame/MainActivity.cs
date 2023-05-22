@@ -6,23 +6,16 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using Firebase.Firestore;
-using Firebase;
 using System;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using Java.Util;
-using Android.Gms.Tasks;
 
 namespace PokerGame
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true,
         TurnScreenOn = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape)]
-    public class MainActivity : AppCompatActivity, IOnSuccessListener
+    public class MainActivity : AppCompatActivity
     {
         Button btn1, btn2, btnhome, btngame, btnsettings;
         Dialog d;
-        public int CurrentId = 1;
         BroadcastReceiver flightModeReceiver = new FlightModeReceiver();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -80,23 +73,23 @@ namespace PokerGame
 
         private void Btngame_Click(object sender, EventArgs e)
         {
-            Intent d = new Intent(this, typeof(GameActivity));
-            d.PutExtra("PlayerId", CurrentId);
-            StartActivity(d);
-            CurrentId++;
+            StartGameActivity();
         }
 
         private void Btn1_Click(object sender, EventArgs e)
         {
-            Intent intent = new Intent(this, typeof(GameActivity));
-            intent.PutExtra("PlayerId", CurrentId);
-            StartActivity(intent);
-            CurrentId++;
+            StartGameActivity();
         }
 
-        public void OnSuccess(Java.Lang.Object result)
+        private void StartGameActivity()
         {
-            throw new NotImplementedException();
+            var editPlayerName = (EditText)FindViewById(Resource.Id.playerNameEditText);
+            var playerName = editPlayerName.Text;
+
+            Intent d = new Intent(this, typeof(GameActivity));
+            d.PutExtra("PlayerName", playerName);
+            StartActivity(d);
+
         }
     }
 }

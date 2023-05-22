@@ -18,6 +18,8 @@ using Android.Gms.Tasks;
 using System.Text.Json;
 using System.Threading;
 using Android.Views.Animations;
+using static Google.Firestore.V1.StructuredAggregationQuery.Aggregation;
+using Javax.Crypto;
 
 namespace PokerGame
 {
@@ -34,10 +36,10 @@ namespace PokerGame
         public static bool Player1HasMoney = true, Player2HasMoney = true, FirstRoundWasPlayed = false, SecondRoundWasPlayed = false, ThirdRoundWasPlayed = false, fourthfRoundWasPlayed = false, didPlayerOneWin = false, didPlayerTwoWin = false;
         public static Game MyGame;
         public static string GameId;
-        Player CurrentPlayer => MyGame.CurrentPlayer;
-        Player p1 => MyGame.Players[0];
-        Player p2 => MyGame.Players[1];
-        const string playerName = "nave";
+
+        string playerName;
+        Player Me => MyGame.GetPlayerByName(playerName);
+
         System.Threading.Timer getGameUpdatesTimer;
         AutoResetEvent autoResetEvent = new AutoResetEvent(false);
         Animation CardFlip;
@@ -48,6 +50,8 @@ namespace PokerGame
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.Game);
+
+            playerName = Intent.GetStringExtra("PlayerName");
 
             rl2 = (RelativeLayout)FindViewById(Resource.Id.relativeLayout2);
             //textview1 = (TextView)FindViewById(Resource.Id.tv1);
@@ -66,12 +70,12 @@ namespace PokerGame
             btncheck.Click += Btncheck_Click;
             var btnraise = (Button)FindViewById(Resource.Id.raisebtn);
             btnraise.Click += Btnraise_Click;
+            var btnPlay = (Button)FindViewById(Resource.Id.playbtn);
+            btnPlay.Click += BtnPlay_Click;
 
             container = (FrameLayout)FindViewById(Resource.Id.GameContainer);
             container.AddView(new PokerTableView(this));
 
-            Repository.Init(this);
-            Repository.GamesCollection.Get().AddOnSuccessListener(this);
         }
 
         public void OnSuccess(Java.Lang.Object result)
@@ -97,15 +101,15 @@ namespace PokerGame
                 Repository.UploadGame(MyGame);
             }
 
-            Repository.gameId ??= MyGame.Id.ToString();
-            getGameUpdatesTimer ??= new System.Threading.Timer(OnGetGameUpdatesTimer, autoResetEvent, 2000, 10000);
+            Repository.gameId = MyGame.Id.ToString();
+            getGameUpdatesTimer ??= new System.Threading.Timer(OnGetGameUpdatesTimer, autoResetEvent, 200, 1000);
 
         }
 
         void OnGetGame(DocumentSnapshot document)
         {
             MyGame = Repository.GetGame(document);
-            DrawCards(MyGame.CurrentRound, MyGame.CurrentPlayer);
+            DrawCards(MyGame.Round, Me);
         }
 
         public void OnGetGameUpdatesTimer(Object stateInfo)
@@ -116,28 +120,55 @@ namespace PokerGame
         protected override void OnStart()
         {
             base.OnStart();
-            //GameLoop();
+            Repository.Init(this);
+            Repository.GamesCollection.Get().AddOnSuccessListener(this);
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            getGameUpdatesTimer.Dispose();
+            getGameUpdatesTimer = null;
+        }
+
+        void BtnPlay_Click(object sender, EventArgs e)
+        {
+            if (MyGame.Round == Round.NotStarted)
+            {
+                MyGame.Round++;
+                Repository.UploadGame(MyGame);
+                return;
+            }
+            // set game player to next player fro debugging
+            var id = Me.Id;
+            id++;
+            if (id >= MyGame.Players.Count)
+                id = 0;
+            playerName = MyGame.Players[id].Name;
         }
 
         void AllIn_Click(object sender, EventArgs e)
         {
-            MyGame.AllIn();
-            Repository.UploadGame(MyGame);
+            var bet = Me.Pot;
+            et.Text = bet.ToString();
         }
 
         void RaisePot_Click(object sender, EventArgs e)
         {
-            MyGame.BetPecentage(100);
+            var bet = MyGame.Pot;
+            et.Text = bet.ToString();
         }
 
         void Raise50_Click(object sender, EventArgs e)
         {
-            MyGame.BetPecentage(50);
+            var bet = MyGame.Pot / 2;
+            et.Text = bet.ToString();
         }
 
         void Raise25_Click(object sender, EventArgs e)
         {
-            MyGame.BetPecentage(25);
+            var bet = MyGame.Pot / 4;
+            et.Text = bet.ToString();
         }
 
         void Btnraise_Click(object sender, EventArgs e)
@@ -165,54 +196,45 @@ namespace PokerGame
 
         void SubmitRaise_Click(object sender, EventArgs e)
         {
-            var sum = Int32.Parse(et.Text);
-            MyGame.BetOld(sum);
+            var betType = MyGame.LastBet > 0 ? BetType.Raise : BetType.Bet;
+            var sum = int.Parse(et.Text);
+            var isValid = MyGame.Bet(Me, betType, sum);
+            if (isValid)
+            {
+                Repository.UploadGame(MyGame);
+                RaiseDialog.Hide();
+            }
+            else
+            {
+                Toast.MakeText(this, "Bet is not valid", ToastLength.Long).Show();
+            }
         }
 
         void Btncheck_Click(object sender, EventArgs e)
         {
-            MyGame.Check();
+            var betType = MyGame.LastBet > 0 ? BetType.Call : BetType.Check;
+            var isValid = MyGame.Bet(Me, betType);
+            if (isValid)
+            {
+                Repository.UploadGame(MyGame);
+            }
+            else
+            {
+                Toast.MakeText(this, "Bet is not valid", ToastLength.Long).Show();
+            }
         }
 
         void Btnfold_Click(object sender, EventArgs e)
         {
-            didPlayerTwoWin = true;
-        }
-
-        public void GameLoop()
-        {
-            if (MyGame == null) return;
-            //DrawCards(MyGame.CurrentRound, MyGame.CurrentPlayer);
-
-            //textview1.Text = MyGame.Players[0].Pot.ToString();
-            //textview2.Text = MyGame.Players[1].Pot.ToString();
-            //textview3.Text = MyGame.Pot.ToString();
-            ////if (MyGame.CurrentRound > 4)
-            ////{
-            ////    Player[] winners = MyGame.CheckWinners();
-            ////    didPlayerOneWin = winners.Contains(p1);
-            ////    didPlayerTwoWin = winners.Contains(p2);
-            ////}
-            //if (didPlayerOneWin && didPlayerTwoWin)
-            //{
-            //    textview5.Visibility = ViewStates.Visible;
-            //    textview4.Visibility = ViewStates.Visible;
-            //    SetUpNewGame();
-            //}
-
-            //else if (didPlayerTwoWin)
-            //{
-            //    textview4.Visibility = ViewStates.Visible;
-            //    SetUpNewGame();
-            //}
-
-            //else if (didPlayerOneWin)
-            //{
-            //    textview5.Visibility = ViewStates.Visible;
-            //    SetUpNewGame();
-            //}
-
-            //MyGame.SetNextPlayerTurn();
+            var isValid = MyGame.Bet(Me, BetType.Fold);
+            if (isValid)
+            {
+                Repository.UploadGame(MyGame);
+            }
+            else
+            {
+                Toast.MakeText(this, "Bet is not valid", ToastLength.Long).Show();
+            }
         }
 
         void Btnmenu_Click(object sender, EventArgs e)
@@ -245,31 +267,73 @@ namespace PokerGame
 
         void DrawCard(string cardName, int left, int top)
         {
-            var layoutParams = new RelativeLayout.LayoutParams(200, 200);
+            var layoutParams = new RelativeLayout.LayoutParams(500 / 2, 726 / 2);
             layoutParams.SetMargins(left, top, 0, 0);
             var imageView = new ImageView(this) { LayoutParameters = layoutParams };
             imageView.SetImageResource(Resources.GetIdentifier(cardName, "drawable", PackageName));
             rl2.AddView(imageView);
         }
 
-        void DrawCards(int round, Player player)
+        void DrawCards(Round round, Player player)
         {
-            var playerCards = MyGame.Players[player.Id].Cards;
-            DrawCard(playerCards[0].Name, 350, 350);
-            DrawCard(playerCards[1].Name, 370, 350);
-
             var upsidedown = "upsidedowncard";
+
+            var playerCards = MyGame.Players[player.Id].Cards;
+            var card0 = upsidedown;
+            var card1 = upsidedown;
+            if (MyGame.Round > Round.NotStarted) 
+            {
+                card0 = playerCards[0].Name;
+                card1 = playerCards[1].Name;
+            }
+            DrawCard(card0, 350, 350);
+            DrawCard(card1, 380, 350);
+
+            var textViews = new int[]
+            {
+                Resource.Id.tvPlayer0,
+                Resource.Id.tvPlayer1,
+                Resource.Id.tvPlayer2,
+                Resource.Id.tvPlayer3
+            };
+
+            var playerIdToDraw = player.Id;
+            for (int i = 0; i < 4; i++)
+            {
+                var tvResourceId = textViews[i];
+                var textView = (TextView)FindViewById(tvResourceId);
+                textView.Text = "";
+                if (playerIdToDraw < MyGame.Players.Count) 
+                {
+                    var playerToDraw = MyGame.Players[playerIdToDraw];
+                    textView.Text = playerToDraw.GetStatus();
+                    if (MyGame.CurrentPlayerIndex == playerIdToDraw)
+                    {
+                        textView.Text += "\nIs Current";
+                    }
+                }
+                playerIdToDraw++;
+                if (playerIdToDraw >= 4)
+                    playerIdToDraw = 0;
+            }
+
             var communityCards = MyGame.CommunityCards;
-            var cardName0 = round >= 2 ? communityCards[0].Name : upsidedown;
-            var cardName1 = round >= 2 ? communityCards[1].Name : upsidedown;
-            var cardName2 = round >= 2 ? communityCards[2].Name : upsidedown;
-            var cardName3 = round >= 3 ? communityCards[3].Name : upsidedown;
-            var cardName4 = round >= 4 ? communityCards[4].Name : upsidedown;
-            DrawCard(cardName0, 550, 400);
-            DrawCard(cardName1, 720, 400);
-            DrawCard(cardName2, 890, 400);
-            DrawCard(cardName3, 1060, 400);
-            DrawCard(cardName4, 1230, 400);
+
+            var showFlop = round >= Round.Flop;
+            var showTurn = round >= Round.Turn;
+            var showRiver = round >= Round.River;
+
+            var cardName0 = showFlop ? communityCards[0].Name : upsidedown;
+            var cardName1 = showFlop ? communityCards[1].Name : upsidedown;
+            var cardName2 = showFlop ? communityCards[2].Name : upsidedown;
+            var cardName3 = showTurn ? communityCards[3].Name : upsidedown;
+            var cardName4 = showRiver ? communityCards[4].Name : upsidedown;
+
+            DrawCard(cardName0, 550, 350);
+            DrawCard(cardName1, 720, 350);
+            DrawCard(cardName2, 890, 350);
+            DrawCard(cardName3, 1060, 350);
+            DrawCard(cardName4, 1230, 350);
         }
     }
 }

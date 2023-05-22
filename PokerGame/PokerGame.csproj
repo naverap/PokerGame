@@ -69,6 +69,7 @@
     <Compile Include="PokerTableView.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SignInActivity.cs" />
     <Compile Include="SignUpActivity.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -160,28 +161,28 @@
     <AndroidResource Include="Resources\drawable\four_of_spades.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\jack_of_clubs2.png" />
+    <AndroidResource Include="Resources\drawable\jack_of_clubs.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\jack_of_diamonds2.png" />
+    <AndroidResource Include="Resources\drawable\jack_of_diamonds.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\jack_of_hearts2.png" />
+    <AndroidResource Include="Resources\drawable\jack_of_hearts.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\jack_of_spades2.png" />
+    <AndroidResource Include="Resources\drawable\jack_of_spades.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\king_of_clubs2.png" />
+    <AndroidResource Include="Resources\drawable\king_of_clubs.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\king_of_diamonds2.png" />
+    <AndroidResource Include="Resources\drawable\king_of_diamonds.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\king_of_hearts2.png" />
+    <AndroidResource Include="Resources\drawable\king_of_hearts.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\king_of_spades2.png" />
+    <AndroidResource Include="Resources\drawable\king_of_spades.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\nine_of_clubs.png" />
@@ -196,13 +197,13 @@
     <AndroidResource Include="Resources\drawable\nine_of_spades.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\queen_of_clubs2.png" />
+    <AndroidResource Include="Resources\drawable\queen_of_clubs.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\queen_of_diamonds2.png" />
+    <AndroidResource Include="Resources\drawable\queen_of_diamonds.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\queen_of_hearts2.png" />
+    <AndroidResource Include="Resources\drawable\queen_of_hearts.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\seven_of_clubs.png" />
@@ -278,7 +279,7 @@
     <AndroidResource Include="Resources\drawable\ace_of_diamonds.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\queen_of_spades2.png" />
+    <AndroidResource Include="Resources\drawable\queen_of_spades.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\two_of_clubs.png" />
