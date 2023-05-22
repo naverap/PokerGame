@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -126,10 +127,27 @@ public class Game
     public Hand CreatePlayerHand(Player p)
         => Hand.CreateHand(CommunityCards.Concat(p.Cards).ToArray());
 
-    //public Player CheckWinner()
-    //{
-    //    Hand Player1Hand = CreatePlayerHand()
-    //}
+   
+    
+
+    public Player[] CheckWinner()
+    {
+        List<Player> Winners = new List<Player>();
+        foreach (Player player in Players)
+        {
+            player.PlayerHand  = CreatePlayerHand(player);
+        }
+        int Player1Strength = Players[0].PlayerHand.Stregth;
+        int Player2Strength = Players[1].PlayerHand.Stregth;
+        if (Player1Strength > Player2Strength) Winners.Add(Players[0]);
+        else if (Player1Strength < Player2Strength)  Winners.Add(Players[1]); 
+        else
+        {
+            Winners.Add(Players[0]);
+            Winners.Add(Players[1]);
+        }
+        return Winners.ToArray();
+    }
 
 
     public void AllIn()

@@ -11,6 +11,7 @@ public class Player
     public bool HasFolded { get; set; }
     public List<Card> Cards { get; set; }
     public bool HasWon { get; set; }
+    public Hand PlayerHand { get; set; }
 
     public Player() { }
 
