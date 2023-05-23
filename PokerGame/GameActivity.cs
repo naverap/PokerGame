@@ -264,7 +264,7 @@ namespace PokerGame
 
         void DrawCard(string cardName, int left, int top)
         {
-            var layoutParams = new RelativeLayout.LayoutParams(200 , 300 );
+            var layoutParams = new RelativeLayout.LayoutParams(180 , 235 );
             layoutParams.SetMargins(left, top, 0, 0);
             var imageView = new ImageView(this) { LayoutParameters = layoutParams };
             imageView.SetImageResource(Resources.GetIdentifier(cardName, "drawable", PackageName));
@@ -278,15 +278,39 @@ namespace PokerGame
             var playerCards = MyGame.Players[player.Id].Cards;
             var card0 = upsidedown;
             var card1 = upsidedown;
+            var card2 = upsidedown;
+            var card3 = upsidedown;
+            var card4 = upsidedown;
+            var card5 = upsidedown;
+            var card6 = upsidedown;
+            var card7 = upsidedown;
             if (MyGame.Round > Round.NotStarted)
             {
                 card0 = playerCards[0].Name;
                 card1 = playerCards[1].Name;
             }
-            DrawCard(card0, 280, 350);
-            DrawCard(card1, 320, 350);
+            DrawCard(card0, 750, 750);
+            DrawCard(card1, 790, 750);
+
+
 
             //Drawing other Players' Cards
+            if (MyGame.Players.Count > 1)
+            {
+                DrawCard(card2, 750, 0);
+                DrawCard(card3, 790, 0);
+            }
+            if (MyGame.Players.Count > 2)
+            {
+                DrawCard(card4, 265, 360);
+                DrawCard(card5, 225, 360);
+            }
+            if (MyGame.Players.Count > 3)
+            {
+                DrawCard(card6, 1770, 360);
+                DrawCard(card7, 1810, 360);
+            }
+            
 
         }
         void DrawGameCards(Round round)
@@ -304,11 +328,11 @@ namespace PokerGame
             var cardName3 = showTurn ? communityCards[3].Name : upsidedown;
             var cardName4 = showRiver ? communityCards[4].Name : upsidedown;
 
-            DrawCard(cardName0, 550, 350);
-            DrawCard(cardName1, 720, 350);
-            DrawCard(cardName2, 890, 350);
-            DrawCard(cardName3, 1060, 350);
-            DrawCard(cardName4, 1230, 350);
+            DrawCard(cardName0, 640, 380);
+            DrawCard(cardName1, 820, 380);
+            DrawCard(cardName2, 990, 380);
+            DrawCard(cardName3, 1160, 380);
+            DrawCard(cardName4, 1330, 380);
         }
         void DrawPlayerStats(Player player)
         {
