@@ -2,6 +2,7 @@
 
 public enum BetType
 {
+    None,
     Fold,
     Check,
     Bet,

@@ -40,4 +40,38 @@ public class GameTests
         var deserialized = JsonSerializer.Deserialize<Player>(serialized);
         Assert.AreEqual(deserialized?.Pot, 1000);
     }
+
+    [TestMethod]
+    public void BetCallRaiseCheck()
+    {
+        var p1 = new Player("p1", 1000, false);
+        var p2 = new Player("p2", 1000, false);
+        var game = new Game();
+        game.AddPlayer(p1);
+        game.AddPlayer(p2);
+        game.Round++; // start game
+
+        game.Bet(p1, BetType.Bet, 200);
+        Assert.AreEqual(Round.PreFlop, game.Round);
+        Assert.AreEqual(200, game.Pot);
+        Assert.AreEqual(200, game.LastBet);
+        Assert.AreEqual(200, p1.LastBetAmount);
+        Assert.AreEqual(800, p1.Pot);
+
+        game.Bet(p2, BetType.Raise, 100);
+        Assert.AreEqual(Round.PreFlop, game.Round);
+        Assert.AreEqual(500, game.Pot);
+        Assert.AreEqual(300, game.LastBet);
+        Assert.AreEqual(300, p2.LastBetAmount);
+        Assert.AreEqual(700, p2.Pot);
+
+        game.Bet(p1, BetType.Call, 0);
+        Assert.AreEqual(Round.Flop, game.Round);
+        Assert.AreEqual(600, game.Pot);
+        Assert.AreEqual(0, game.LastBet);
+        Assert.AreEqual(0, p1.LastBetAmount);
+        Assert.AreEqual(700, p1.Pot);
+
+        Console.WriteLine(JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true }));
+    }
 }
