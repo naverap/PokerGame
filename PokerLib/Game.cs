@@ -62,11 +62,11 @@ public class Game
     {
         foreach (Player player in Players)
         {
-            player.Hand = Hand.CreateHand(CommunityCards.Concat(player.Cards).ToArray());
+            player.Hand = Hand.CreateHand(CommunityCards.Concat(player.Cards).ToList());
         }
 
         var winners = Players.Where(p => !p.HasFolded)
-            .GroupBy(p => p.Hand.Stregth)
+            .GroupBy(p => p.Hand.Score)
             .OrderByDescending(g => g.Key)
             .First();
 

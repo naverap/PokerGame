@@ -1,85 +1,51 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace PokerLib;
 
 public class Hand
 {
-    public Card[] Cards { get; set; }
-    public int Stregth { get; set; }
-    public string Name { get; set; }
-    public bool IsValid { get; set; }
-    public virtual bool Verify => true;
-    public Card TieBreaker { get; set; }
-   
-
-    public Hand(Card[] cards)
+    public static IHand CreateHand(List<Card> cards)
     {
-        Cards = cards;
-    }
-    public Hand() { }
+        IHand hand;
 
+        hand = new Hand9StraightFlush(cards);
+        if (hand.IsValid) return hand;
 
-    public static Hand CreateHand(Card[] cards)
-    {
-        Hand straightFlush = new HandStraightFlush(cards);
-        if (straightFlush.IsValid) return straightFlush;
-        Hand fourOfAKind = new HandFourOfAKind(cards);
-        if (fourOfAKind.IsValid) return fourOfAKind;
-        Hand fullHouse = new HandFullHouse(cards);
-        if (fullHouse.IsValid) return fullHouse;
-        Hand flush = new HandFlush(cards);
-        if (flush.IsValid) return flush;
-        Hand straight = new HandStraight(cards);
-        if (straight.IsValid) return straight;
-        Hand threeOfAKind = new HandThreeOfAKInd(cards);
-        if (threeOfAKind.IsValid) return threeOfAKind; 
-        Hand twoPair = new HandTwoPair(cards);
-        if (twoPair.IsValid) return twoPair;
-        Hand pair = new HandPair(cards);
-        if (pair.IsValid) return pair;
-        return new HandHighCard(cards);
+        hand = new Hand8FourOfAKind(cards);
+        if (hand.IsValid) return hand;
+
+        hand = new Hand7FullHouse(cards);
+        if (hand.IsValid) return hand;
+
+        hand = new Hand6Flush(cards);
+        if (hand.IsValid) return hand;
+
+        hand = new Hand5Straight(cards);
+        if (hand.IsValid) return hand;
+
+        hand = new Hand4ThreeOfAKind(cards);
+        if (hand.IsValid) return hand;
+
+        hand = new Hand3TwoPair(cards);
+        if (hand.IsValid) return hand;
+
+        hand = new Hand2OnePair(cards);
+        if (hand.IsValid) return hand;
+
+        return new Hand1HighCard(cards);
     }
 
-    public bool IsFlush => Cards.GroupBy(h => h.Suit)
-        .Where(g => g.Count() >= 5)
-        .Any();
-
-    protected static bool ContainsStraight(Hand hand)
+    public static long GetMultiplier(int rank) => rank switch
     {
-        if (hand.Contains(CardValue.Ace) &&
-             hand.Contains(CardValue.Two) &&
-             hand.Contains(CardValue.Three) &&
-             hand.Contains(CardValue.Four) &&
-            hand.Contains(CardValue.Five))
-        {
-            return true;
-        }
-
-        var ordered = hand.Cards
-            .GroupBy(h => h.Value)
-            .OrderBy(g => g.Key)
-            .ToArray();
-
-        if (ordered.Length < 5) return false;
-
-        for (var i = 0; i < ordered.Length - 5; i++)
-        {
-            var first = ordered[i].Key;
-            var last = ordered[i + 4].Key;
-            if (last - first == 4) return true;
-        }
-        return false;
-    }
-
-    protected bool Contains(CardValue v)
-    {
-        for (int i = 0; i < Cards.Length; i++)
-        {
-            if (Cards[i].Value == v)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+        1 => 0x1,
+        2 => 0x100000,
+        3 => 0x1000000,
+        4 => 0x10000000,
+        5 => 0x100000000,
+        6 => 0x1000000000,
+        7 => 0x10000000000,
+        8 => 0x100000000000,
+        9 => 0x1000000000000,
+        _ => 0x1
+    };
 }

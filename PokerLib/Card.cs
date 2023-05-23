@@ -19,6 +19,12 @@ public struct Card
     [JsonIgnore]
     public readonly string DisplayName => GetDisplayName();
 
+    [JsonIgnore]
+    public readonly int IntValue => (int)Value;
+
+    [JsonIgnore]
+    public readonly string HexValue => IntValue.ToString("X1");
+
     public Card(CardSuit suit, CardValue value)
     {
         Id = (int)suit * 13 + (int)value - 2;

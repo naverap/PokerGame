@@ -30,7 +30,7 @@ public class Player
     public int LastBetAmount { get; set; }
 
     [JsonIgnore]
-    public Hand Hand { get; set; }
+    public IHand Hand { get; set; }
 
     public Player() { }
 
