@@ -14,9 +14,10 @@ namespace PokerGame
         TurnScreenOn = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape)]
     public class MainActivity : AppCompatActivity
     {
-        Button btn1, btn2, btnhome, btngame, btnsettings;
+        Button btn1, btn2, btnhome, btngame, btnsignup;
         Dialog d;
         BroadcastReceiver flightModeReceiver = new FlightModeReceiver();
+        public static bool IsSignedIn;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -43,7 +44,6 @@ namespace PokerGame
             UnregisterReceiver(flightModeReceiver);
         }
 
-
         private void Btn2_Click(object sender, EventArgs e)
         {
             CreateMenu();
@@ -58,11 +58,18 @@ namespace PokerGame
 
             btngame = (Button)d.FindViewById(Resource.Id.gamebtn);
             btnhome = (Button)d.FindViewById(Resource.Id.homebtn);
-            btnsettings = (Button)d.FindViewById(Resource.Id.settingbtn);
+            btnsignup = (Button)d.FindViewById(Resource.Id.signupbtn);
 
             btngame.Click += Btngame_Click;
             btnhome.Click += Btnhome_Click;
+            btnsignup.Click += Btnsignup_Click;
             d.Show();
+        }
+
+        private void Btnsignup_Click(object sender, EventArgs e)
+        {
+            Intent t = new Intent(this, typeof(SignUpActivity));
+            StartActivity(t);
         }
 
         private void Btnhome_Click(object sender, EventArgs e)

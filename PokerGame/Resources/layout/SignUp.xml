@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:orientation="vertical"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   android:padding="16dp"
+   android:gravity="center_horizontal"
+   android:background="@color/colorPrimary">
+    
+   <ImageView
+       android:layout_width="96dp"
+       android:layout_height="96dp"
+       android:tint="@android:color/white"/>
+
+   <TextView
+       android:layout_marginTop="24dp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Sign In"
+       android:textSize="24sp"
+       android:textStyle="bold"
+       android:textColor="@android:color/white" />
+
+
+   <EditText
+       android:id="@+id/usernameEditText"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="24dp"
+       android:hint="Username"
+       android:inputType="text"
+       android:maxLines="1"
+       android:singleLine="true"
+       android:textColorHint="#CCCCCC"
+       android:textColor="@android:color/white"
+       android:textSize="16sp" />
+     <EditText
+       android:id="@+id/GmailEditText"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="24dp"
+       android:hint="gmail"
+       android:inputType="text"
+       android:maxLines="1"
+       android:singleLine="true"
+       android:textColorHint="#CCCCCC"
+       android:textColor="@android:color/white"
+       android:textSize="16sp" />
+     <EditText
+       android:id="@id/passwordEditText"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="24dp"
+       android:hint="Password"
+       android:inputType="text"
+       android:maxLines="1"
+       android:singleLine="true"
+       android:textColorHint="#CCCCCC"
+       android:textColor="@android:color/white"
+       android:textSize="16sp" />
+
+   <EditText
+       android:id="@+id/reEnterPasswordEditText"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="16dp"
+       android:hint="Re-Enter Password"
+       android:inputType="textPassword"
+       android:maxLines="1"
+       android:singleLine="true"
+       android:textColorHint="#CCCCCC"
+       android:textColor="@android:color/white"
+       android:textSize="16sp" />
+
+   <Button
+       android:id="@+id/signinButton"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="24dp"
+       android:text="Sign Up"
+       android:textColor="@android:color/white"
+       android:textSize="16sp"
+       android:elevation="4dp" />
+
+   <TextView
+       android:id="@+id/forgotPasswordTextView"
+       android:layout_marginTop="24dp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Forgot Password?"
+       android:textColor="@color/colorAccent"
+       android:textSize="16sp" />
+
+   <TextView
+       android:id="@+id/signinTextView"
+       android:layout_marginTop="24dp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Already have an account? Sign in"
+       android:textColor="#CCCCCC"
+       android:textSize="16sp" />
+    
+</LinearLayout>

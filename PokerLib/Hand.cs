@@ -9,12 +9,15 @@ public class Hand
     public string Name { get; set; }
     public bool IsValid { get; set; }
     public virtual bool Verify => true;
+    public Card TieBreaker { get; set; }
+   
 
     public Hand(Card[] cards)
     {
         Cards = cards;
     }
     public Hand() { }
+
 
     public static Hand CreateHand(Card[] cards)
     {

@@ -9,10 +9,20 @@ namespace PokerGame
 {
     public class Repository
     {
+        
         public static FirebaseFirestore db;
+
+        //Game
         public static CollectionReference GamesCollection => db.Collection("Games");
         public static string gameId;
         public static DocumentReference GameDocument => GamesCollection.Document(gameId);
+
+        //Users
+        public static string UserName;
+        public static CollectionReference UserCollection => db.Collection("Users");
+        public static DocumentReference UserDocument => GamesCollection.Document(UserName);
+
+
 
         public static void Init(Context context)
         {
@@ -39,7 +49,7 @@ namespace PokerGame
                 return FirebaseFirestore.GetInstance(app[0]);
             }
         }
-
+        //Game
         public static Game GetGame(DocumentSnapshot document)
             => JsonSerializer.Deserialize<Game>(document.Get("data").ToString());
 
@@ -55,6 +65,24 @@ namespace PokerGame
         public static void DeleteGame(string gameId)
         {
             GamesCollection.Document(gameId).Delete();
+        }
+
+        //user
+        public static MyUser GetUser(DocumentSnapshot document)
+           => JsonSerializer.Deserialize<MyUser>(document.Get("data").ToString());
+
+        public static void UploadUser(MyUser user)
+        {
+            var json = JsonSerializer.Serialize(user);
+            var docref = UserCollection.Document(user.Name);
+            HashMap map = new HashMap();
+            map.Put("data", json);
+            docref.Set(map);
+        }
+
+        public static void DeleteUser(string username)
+        {
+            UserCollection.Document(username).Delete();
         }
     }
 }

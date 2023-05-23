@@ -1,25 +1,14 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 using Firebase.Firestore;
-using Firebase;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using static Java.Util.Jar.Attributes;
-using Java.Util;
 using PokerLib;
 using Android.Gms.Tasks;
-using System.Text.Json;
 using System.Threading;
 using Android.Views.Animations;
-using static Google.Firestore.V1.StructuredAggregationQuery.Aggregation;
-using Javax.Crypto;
 
 namespace PokerGame
 {
@@ -109,7 +98,9 @@ namespace PokerGame
         void OnGetGame(DocumentSnapshot document)
         {
             MyGame = Repository.GetGame(document);
-            DrawCards(MyGame.Round, Me);
+            DrawPlayerCards(MyGame.Round, Me);
+            DrawGameCards(MyGame.Round);
+            DrawPlayerStats(Me);
         }
 
         public void OnGetGameUpdatesTimer(Object stateInfo)
@@ -248,9 +239,15 @@ namespace PokerGame
             btngame.Click += Btngame_Click;
             var btnhome = (Button)d.FindViewById(Resource.Id.homebtn);
             btnhome.Click += Btnhome_Click;
-            var btnsettings = (Button)d.FindViewById(Resource.Id.settingbtn);
-
+           var btnsignup = (Button)d.FindViewById(Resource.Id.signupbtn);
+            btnsignup.Click += Btnsignup_Click;
             d.Show();
+        }
+
+        private void Btnsignup_Click(object sender, EventArgs e)
+        {
+            Intent t = new Intent(this, typeof(SignUpActivity));
+            StartActivity(Intent);
         }
 
         void Btnhome_Click(object sender, EventArgs e)
@@ -261,62 +258,40 @@ namespace PokerGame
 
         void Btngame_Click(object sender, EventArgs e)
         {
-            Intent l = new Intent(this, typeof(GameActivity));
+            Intent t = new Intent(this, typeof(GameActivity));
             StartActivity(Intent);
         }
 
         void DrawCard(string cardName, int left, int top)
         {
-            var layoutParams = new RelativeLayout.LayoutParams(500 / 2, 726 / 2);
+            var layoutParams = new RelativeLayout.LayoutParams(200 , 300 );
             layoutParams.SetMargins(left, top, 0, 0);
             var imageView = new ImageView(this) { LayoutParameters = layoutParams };
             imageView.SetImageResource(Resources.GetIdentifier(cardName, "drawable", PackageName));
             rl2.AddView(imageView);
         }
 
-        void DrawCards(Round round, Player player)
+        void DrawPlayerCards(Round round, Player player)
         {
             var upsidedown = "upsidedowncard";
 
             var playerCards = MyGame.Players[player.Id].Cards;
             var card0 = upsidedown;
             var card1 = upsidedown;
-            if (MyGame.Round > Round.NotStarted) 
+            if (MyGame.Round > Round.NotStarted)
             {
                 card0 = playerCards[0].Name;
                 card1 = playerCards[1].Name;
             }
-            DrawCard(card0, 350, 350);
-            DrawCard(card1, 380, 350);
+            DrawCard(card0, 280, 350);
+            DrawCard(card1, 320, 350);
 
-            var textViews = new int[]
-            {
-                Resource.Id.tvPlayer0,
-                Resource.Id.tvPlayer1,
-                Resource.Id.tvPlayer2,
-                Resource.Id.tvPlayer3
-            };
+            //Drawing other Players' Cards
 
-            var playerIdToDraw = player.Id;
-            for (int i = 0; i < 4; i++)
-            {
-                var tvResourceId = textViews[i];
-                var textView = (TextView)FindViewById(tvResourceId);
-                textView.Text = "";
-                if (playerIdToDraw < MyGame.Players.Count) 
-                {
-                    var playerToDraw = MyGame.Players[playerIdToDraw];
-                    textView.Text = playerToDraw.GetStatus();
-                    if (MyGame.CurrentPlayerIndex == playerIdToDraw)
-                    {
-                        textView.Text += "\nIs Current";
-                    }
-                }
-                playerIdToDraw++;
-                if (playerIdToDraw >= 4)
-                    playerIdToDraw = 0;
-            }
-
+        }
+        void DrawGameCards(Round round)
+        {
+            var upsidedown = "upsidedowncard";
             var communityCards = MyGame.CommunityCards;
 
             var showFlop = round >= Round.Flop;
@@ -335,5 +310,38 @@ namespace PokerGame
             DrawCard(cardName3, 1060, 350);
             DrawCard(cardName4, 1230, 350);
         }
+        void DrawPlayerStats(Player player)
+        {
+            var textViews = new int[]
+            {
+                Resource.Id.tvPlayer0,
+                Resource.Id.tvPlayer1,
+                Resource.Id.tvPlayer2,
+                Resource.Id.tvPlayer3
+            };
+
+            var playerIdToDraw = player.Id;
+            for (int i = 0; i < 4; i++)
+            {
+                var tvResourceId = textViews[i];
+                var textView = (TextView)FindViewById(tvResourceId);
+                textView.Text = "";
+                if (playerIdToDraw < MyGame.Players.Count)
+                {
+                    var playerToDraw = MyGame.Players[playerIdToDraw];
+                    textView.Text = playerToDraw.GetStatus();
+                    if (MyGame.CurrentPlayerIndex == playerIdToDraw)
+                    {
+                        textView.Text += "\nIs Current";
+                    }
+                }
+                playerIdToDraw++;
+                if (playerIdToDraw >= 4)
+                    playerIdToDraw = 0;
+            }
+
+
+        }
     }
-}
+            
+    }

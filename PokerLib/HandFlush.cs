@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace PokerLib;
 
 public class HandFlush : Hand
 {
+   
     public HandFlush(Card[] cards)
     {
         Cards = cards;
@@ -16,4 +18,12 @@ public class HandFlush : Hand
     public override bool Verify => Cards.GroupBy(h => h.Suit)
         .Where(g => g.Count() >= 5)
         .Any();
+   
+    
+        
+        
+       
+        
+
+    
 }
