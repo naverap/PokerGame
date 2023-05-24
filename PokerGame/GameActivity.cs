@@ -130,7 +130,7 @@ namespace PokerGame
                 Repository.UploadGame(MyGame);
                 return;
             }
-            // set game player to next player fro debugging
+            // set game player to next player for debugging
             var id = Me.Id;
             id++;
             if (id >= MyGame.Players.Count)
@@ -264,7 +264,8 @@ namespace PokerGame
 
         void DrawCard(string cardName, int left, int top)
         {
-            var layoutParams = new RelativeLayout.LayoutParams(180 , 235 );
+            // card image size is 500x726 pixels
+            var layoutParams = new RelativeLayout.LayoutParams(180 , 261);
             layoutParams.SetMargins(left, top, 0, 0);
             var imageView = new ImageView(this) { LayoutParameters = layoutParams };
             imageView.SetImageResource(Resources.GetIdentifier(cardName, "drawable", PackageName));
@@ -273,6 +274,31 @@ namespace PokerGame
 
         void DrawPlayerCards(Round round, Player player)
         {
+            var w = rl2.Width;
+            var h = rl2.Height;
+
+            var centerX = w / 2;
+            var centerY = h / 2;
+
+            var margin = 20;
+            var cardWidth = 180;
+            var cardHeight = 261;
+
+            var cardsWidth = cardWidth * 5 + margin * 4;
+
+            var startX = centerX - cardsWidth / 2;
+            var startY = centerY - cardHeight / 2;
+
+            var ex = startX + cardsWidth + 4 * margin;
+            var wx = startX - cardWidth - 6 * margin;
+            var nx = centerX - (cardWidth + 2 * margin) / 2;
+            var sx = centerX - (cardWidth + 2 * margin) / 2;
+
+            var ey = startY;
+            var wy = startY;
+            var ny = startY - 2 * margin - cardHeight;
+            var sy = startY + 2 * margin + cardHeight;
+
             var upsidedown = "upsidedowncard";
 
             var playerCards = MyGame.Players[player.Id].Cards;
@@ -289,32 +315,47 @@ namespace PokerGame
                 card0 = playerCards[0].Name;
                 card1 = playerCards[1].Name;
             }
-            DrawCard(card0, 750, 750);
-            DrawCard(card1, 790, 750);
+            DrawCard(card0, sx, sy);
+            DrawCard(card1, sx + 2*margin, sy);
 
 
 
             //Drawing other Players' Cards
             if (MyGame.Players.Count > 1)
             {
-                DrawCard(card2, 750, 0);
-                DrawCard(card3, 790, 0);
+                DrawCard(card2, nx, ny);
+                DrawCard(card3, nx+2*margin, ny);
             }
             if (MyGame.Players.Count > 2)
             {
-                DrawCard(card4, 265, 360);
-                DrawCard(card5, 225, 360);
+                DrawCard(card4, ex, ey);
+                DrawCard(card5, ex + margin*2, ey);
             }
             if (MyGame.Players.Count > 3)
             {
-                DrawCard(card6, 1770, 360);
-                DrawCard(card7, 1810, 360);
+                DrawCard(card6, wx, wy);
+                DrawCard(card7, wx + margin*2, wy);
             }
             
 
         }
         void DrawGameCards(Round round)
         {
+            var w = rl2.Width;
+            var h = rl2.Height;
+
+            var centerX = w / 2;
+            var centerY = h / 2;
+
+            var margin = 20;
+            var cardWidth = 180;
+            var cardHeight = 261;
+
+            var cardsWidth = cardWidth * 5 + margin * 4;
+
+            var startX = centerX - cardsWidth / 2;
+            var startY = centerY - cardHeight / 2;
+
             var upsidedown = "upsidedowncard";
             var communityCards = MyGame.CommunityCards;
 
@@ -328,12 +369,17 @@ namespace PokerGame
             var cardName3 = showTurn ? communityCards[3].Name : upsidedown;
             var cardName4 = showRiver ? communityCards[4].Name : upsidedown;
 
-            DrawCard(cardName0, 640, 380);
-            DrawCard(cardName1, 820, 380);
-            DrawCard(cardName2, 990, 380);
-            DrawCard(cardName3, 1160, 380);
-            DrawCard(cardName4, 1330, 380);
+            DrawCard(cardName0, startX, startY);
+            startX += cardWidth + margin;
+            DrawCard(cardName1, startX, startY);
+            startX += cardWidth + margin;
+            DrawCard(cardName2, startX, startY);
+            startX += cardWidth + margin;
+            DrawCard(cardName3, startX, startY);
+            startX += cardWidth + margin;
+            DrawCard(cardName4, startX, startY);
         }
+
         void DrawPlayerStats(Player player)
         {
             var textViews = new int[]
