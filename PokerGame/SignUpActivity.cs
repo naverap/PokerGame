@@ -48,21 +48,25 @@ namespace PokerGame
 
         private void SignUp()
         {
+            Repository.Init(this);
             string username = usernameEditText.Text;
             string gmail = gmailEditText.Text;
             string password = passwordEditText.Text;
             string reEnterPassword = reEnterPasswordEditText.Text;
-            Intent l = new Intent(this, typeof(MainActivity));
+
+            MyUser user = new MyUser(username, password, gmail);
+            Repository.UploadUser(user);
+            MainActivity.IsSignedIn = true;
+            FinishActivity(-1);
+
+            //Intent l = new Intent(this, typeof(MainActivity));
 
 
             // Perform sign-up logic here
             // Validate input and save user data
           //  if (IsSignUpValid())
           //  {
-                MyUser user = new MyUser(username, password, gmail);
-                Repository.UploadUser(user);
-                MainActivity.IsSignedIn = true;
-                StartActivity(Intent);
+                //StartActivity(Intent);
            // }
            // else Toast.MakeText(this, "your details are invalide", ToastLength.Long).Show();
             

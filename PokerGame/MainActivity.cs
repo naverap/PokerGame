@@ -69,7 +69,7 @@ namespace PokerGame
         private void Btnsignup_Click(object sender, EventArgs e)
         {
             Intent t = new Intent(this, typeof(SignUpActivity));
-            StartActivity(t);
+            StartActivityForResult(t, -1);
         }
 
         private void Btnhome_Click(object sender, EventArgs e)

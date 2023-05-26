@@ -26,7 +26,7 @@ namespace PokerGame
 
         public static void Init(Context context)
         {
-            db = GetDataBase(context);
+            db ??= GetDataBase(context);
         }
 
         static FirebaseFirestore GetDataBase(Context context)

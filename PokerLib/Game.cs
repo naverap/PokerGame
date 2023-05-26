@@ -102,21 +102,6 @@ public class Game
         return true;
     }
 
-    public void NextRound()
-    {
-        Round++;
-        LastBet = 0;
-        foreach (var player in Players)
-        {
-            player.LastBetAmount = 0;
-            player.LastBetType = BetType.None;
-        }
-        if (Round == Round.Ended)
-        {
-            SetAndPayWinners();
-        }
-    }
-
     public bool Bet(Player player, BetType betType, int amount = 0)
     {
         if (player != CurrentPlayer)
@@ -138,7 +123,22 @@ public class Game
         while (CurrentPlayer.HasFolded);
 
         if (RoundHasEnded())
-            NextRound();
+        {
+            LastBet = 0;
+            foreach (var p in Players)
+            {
+                p.LastBetAmount = 0;
+                p.LastBetType = BetType.None;
+            }
+            if (Players.Where(p => !p.HasFolded && p.Pot > 0).Count() <= 1)
+                Round = Round.Ended;
+            else
+                Round++;
+            if (Round == Round.Ended)
+            {
+                SetAndPayWinners();
+            }
+        }
 
         return true;
     }
@@ -155,6 +155,8 @@ public class Game
                     return false;
                 return true;
             case BetType.Bet:
+                if (amount == 0)
+                    return false;
                 if (player.Pot < amount)
                     return false;
                 Pot += amount;
@@ -165,15 +167,24 @@ public class Game
                 if (LastBet == 0)
                     return false;
                 amount = LastBet - player.LastBetAmount;
-                if (player.Pot < amount)
-                    return false; // TODO: allow to call and return money to previous betters. Also applicable to all in
+                //if (player.Pot < amount)
+                //    return false;
                 Pot += amount;
                 player.Pot -= amount;
                 return true;
             case BetType.Raise:
+                if (amount == 0)
+                    return false;
                 if (LastBet == 0)
                     return false;
-                return MakeBet(player, BetType.Bet, LastBet + amount);
+                var raiseAmount = amount;
+                amount = LastBet + amount - player.LastBetAmount;
+                //if (player.Pot < amount)
+                //    return false;
+                Pot += amount;
+                player.Pot -= amount;
+                LastBet += raiseAmount;
+                return true;
             case BetType.AllIn:
                 return MakeBet(player, BetType.Bet, player.Pot);
             default:
