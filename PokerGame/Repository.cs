@@ -1,8 +1,10 @@
 ﻿using Android.Content;
 using Firebase;
 using Firebase.Firestore;
+using Java.Interop;
 using Java.Util;
 using PokerLib;
+using System;
 using System.Text.Json;
 
 namespace PokerGame
@@ -84,5 +86,27 @@ namespace PokerGame
         {
             UserCollection.Document(username).Delete();
         }
+
+        public bool DoesDocumentExist( string documentName, QueryDocumentSnapshot query)
+        {
+            try
+            {
+                // Create a reference to the document
+                DocumentReference docRef = UserCollection.Document(documentName);
+
+                // Read the document
+                DocumentSnapshot snapshot = query;
+
+                // Check if the document exists
+               return snapshot.Exists();
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

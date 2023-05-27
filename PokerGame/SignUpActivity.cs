@@ -6,12 +6,15 @@ using System;
 using PokerLib;
 using Firebase.Firestore.Auth;
 using PokerGame;
-
+using System.Text.RegularExpressions;
+using System.Globalization;
+using Android.Gms.Tasks;
+using Firebase.Firestore;
 
 namespace PokerGame
 {
     [Activity(Label = "SignUpActivity")]
-    public class SignUpActivity : Activity
+    public class SignUpActivity : Activity, IOnSuccessListener
     {
         private EditText usernameEditText;
         private EditText gmailEditText;
@@ -43,7 +46,8 @@ namespace PokerGame
 
         private void SignInTextView_Click(object sender, System.EventArgs e)
         {
-            Finish();
+            Intent intent = new Intent(this,typeof(SignInActivity));
+            StartActivity(intent);
         }
 
         private void SignUp()
@@ -53,34 +57,84 @@ namespace PokerGame
             string gmail = gmailEditText.Text;
             string password = passwordEditText.Text;
             string reEnterPassword = reEnterPasswordEditText.Text;
-
-            MyUser user = new MyUser(username, password, gmail);
-            Repository.UploadUser(user);
-            MainActivity.IsSignedIn = true;
-            FinishActivity(-1);
-
-            //Intent l = new Intent(this, typeof(MainActivity));
-
+            Intent i = new Intent(this,typeof(MainActivity));
 
             // Perform sign-up logic here
             // Validate input and save user data
-          //  if (IsSignUpValid())
-          //  {
-                //StartActivity(Intent);
-           // }
-           // else Toast.MakeText(this, "your details are invalide", ToastLength.Long).Show();
-            
-
-            
+            if (IsSignUpValid())
+            {
+                MyUser user = new MyUser(username, password, gmail);
+                Repository.UploadUser(user);
+                MainActivity.IsSignedIn = true;
+                StartActivity(i);
+            }
+            else Toast.MakeText(this, "your details are invalide", ToastLength.Long).Show();   
         }
 
         private bool IsSignUpValid()
         {
             if (string.IsNullOrEmpty(usernameEditText.Text)) { return false; }
             if (string.IsNullOrEmpty(passwordEditText.Text)) { return false; }
-            if (string.IsNullOrEmpty(gmailEditText.Text)) { return false; }
+            if (!IsValidEmail(gmailEditText.Text)) { return false; }
             if (passwordEditText != reEnterPasswordEditText) { return false; }
             return true;
         }
+
+        public void OnGetUser(Object stateInfo)
+        {
+            Repository.UserDocument.Get().AddOnSuccessListener(this);
+        }
+        public void OnSuccess(Java.Lang.Object result)
+        {
+        //    if (result is QuerySnapshot query)
+        //        OnGetGames(query);
+        //    else if (result is DocumentSnapshot document)
+        //        OnGetGame(document);
+        }
+
+        public static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+            try
+            {
+                // Normalize the domain
+                email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+                                      RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+                // Examines the domain part of the email and normalizes it.
+                string DomainMapper(Match match)
+                {
+                    // Use IdnMapping class to convert Unicode domain names.
+                    var idn = new IdnMapping();
+
+                    // Pull out and process domain name (throws ArgumentException on invalid)
+                    string domainName = idn.GetAscii(match.Groups[2].Value);
+
+                    return match.Groups[1].Value + domainName;
+                }
+            }
+            catch (RegexMatchTimeoutException e)
+            {
+                return false;
+            }
+            catch (ArgumentException e)
+            {
+                return false;
+            }
+
+            try
+            {
+                return Regex.IsMatch(email,
+                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                    RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return false;
+            }
+        }
+
+      
     }
 }

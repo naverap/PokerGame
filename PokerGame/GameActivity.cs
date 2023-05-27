@@ -320,7 +320,7 @@ namespace PokerGame
 
 
 
-            //Drawing other Players' Cards
+            //Draw other Players' Cards
             if (MyGame.Players.Count > 1)
             {
                 DrawCard(card2, nx, ny);
