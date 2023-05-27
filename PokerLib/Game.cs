@@ -7,7 +7,7 @@ namespace PokerLib;
 public class Game
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public int Blind { get; set; } = 100;
+    public int Blind { get; set; } = 50;
     public int Pot { get; set; } = 0;
     public int LastBet { get; set; }
     public Round Round { get; set; }
@@ -25,17 +25,32 @@ public class Game
 
     // Dealer
     public int DealerIndex { get; set; }
-    public Player Dealer => Players[DealerIndex];
 
-    public bool IsOngoing { get; set; }
-    public bool CanJoin => Players.Count < MaxPlayers && !IsOngoing;
+    public bool CanJoin => Players.Count < MaxPlayers && Round == Round.NotStarted;
 
     public Game()
     {
-        Players = new();
+        Players ??= new();
         Deck = new Deck();
         Deck.Shuffle();
         CommunityCards = Deck.Pop(5);
+    }
+
+    public void StartNew()
+    {
+        Deck = new Deck();
+        Deck.Shuffle();
+        CommunityCards = Deck.Pop(5);
+        Round = Round.PreFlop;
+        DealerIndex = GetNextPlayerIndex(DealerIndex);
+        CurrentPlayerIndex = GetNextPlayerIndex(DealerIndex);
+        //TODO: plays blinds turns
+        foreach (var player in Players)
+        {
+            player.HasWon = false;
+            player.Cards = Deck.Pop(2);
+        }
+        PlayBlinds();
     }
 
     int GetLowestAvailableId()
@@ -56,6 +71,12 @@ public class Game
     public Player GetPlayerByName(string playerName)
     {
         return Players.SingleOrDefault(p => p.Name == playerName);
+    }
+
+    public void PlayBlinds()
+    {
+        Bet(CurrentPlayer, BetType.Bet, Blind);
+        Bet(CurrentPlayer, BetType.Raise, Blind);
     }
 
     public void SetAndPayWinners()
@@ -88,6 +109,14 @@ public class Game
         {
             CurrentPlayerIndex = 0;
         }
+    }
+
+    public int GetNextPlayerIndex(int currentPlayerIndex)
+    {
+        var result = currentPlayerIndex + 1;
+        if (result >= Players.Count)
+            result = 0;
+        return result;
     }
 
     public bool RoundHasEnded()

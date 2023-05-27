@@ -32,6 +32,8 @@ public class Player
     [JsonIgnore]
     public IHand Hand { get; set; }
 
+    public string HandName => Hand?.Name;
+
     public Player() { }
 
     public Player(string name, int playerPot, bool isPlaying)
@@ -42,8 +44,17 @@ public class Player
         HasFolded = isPlaying;
     }
 
-    public string GetStatus()
+    public string GetStatus(bool isCurrent, bool gameEnded)
     {
-        return $"Player {Id}\n{Name}\nPot {Pot}\n{LastBetType} {LastBetAmount}";
+        var result = $"Player {Id}\n{Name}\nPot {Pot}\n{LastBetType} {LastBetAmount}";
+        if (isCurrent && !gameEnded)
+        {
+            result += "\nIs Current";
+        }
+        if (gameEnded)
+        {
+            result += $"\nHand: {HandName}\nWinner: {HasWon}";
+        }
+        return result;
     }
 }

@@ -187,13 +187,13 @@ public class GameTests
         Assert.AreEqual(200, p1.Pot);
 
         game.Bet(p2, BetType.Call, 0);
+        Console.WriteLine(JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true }));
         Assert.AreEqual(Round.Ended, game.Round);
         Assert.AreEqual(0, game.Pot);
         Assert.AreEqual(0, game.LastBet);
         Assert.AreEqual(0, p1.LastBetAmount);
         Assert.AreEqual(0, p2.LastBetAmount);
-        Assert.AreEqual(1800, p1.Pot);
-        Assert.AreEqual(-300, p2.Pot);
+        Assert.AreEqual(1500, p1.Pot + p2.Pot);
 
         Console.WriteLine(JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true }));
     }

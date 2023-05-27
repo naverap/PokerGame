@@ -66,17 +66,11 @@ namespace PokerGame
             d.Show();
         }
 
-        private void Btnsignup_Click(object sender, EventArgs e)
-        {
-            Intent t = new Intent(this, typeof(SignUpActivity));
-            StartActivityForResult(t, -1);
-        }
+        private void Btnsignup_Click(object sender, EventArgs e) 
+            => StartActivity(new Intent(this, typeof(SignUpActivity)));
 
-        private void Btnhome_Click(object sender, EventArgs e)
-        {
-            Intent t = new Intent(this, typeof(MainActivity));
-            StartActivity(t);
-        }
+        private void Btnhome_Click(object sender, EventArgs e) 
+            => StartActivity(new Intent(this, typeof(MainActivity)));
 
         private void Btngame_Click(object sender, EventArgs e)
         {

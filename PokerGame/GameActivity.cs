@@ -33,6 +33,11 @@ namespace PokerGame
         AutoResetEvent autoResetEvent = new AutoResetEvent(false);
         Animation CardFlip;
 
+        const string upsidedown = "upsidedowncard";
+        const int margin = 20;
+        const int cardWidth = 180;
+        const int cardHeight = 261;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -43,14 +48,6 @@ namespace PokerGame
             playerName = Intent.GetStringExtra("PlayerName");
 
             rl2 = (RelativeLayout)FindViewById(Resource.Id.relativeLayout2);
-            //textview1 = (TextView)FindViewById(Resource.Id.tv1);
-            //textview2 = (TextView)FindViewById(Resource.Id.tv2);
-            //textview3 = (TextView)FindViewById(Resource.Id.tv3);
-            //textview4 = (TextView)FindViewById(Resource.Id.tv4);
-            //textview5 = (TextView)FindViewById(Resource.Id.tv5);
-            //textview4.Visibility = ViewStates.Invisible;
-            //textview5.Visibility = ViewStates.Invisible; ;
-
             var btnmenu = (Button)FindViewById(Resource.Id.menubtn2);
             btnmenu.Click += Btnmenu_Click;
             var btnfold = (Button)FindViewById(Resource.Id.foldbtn);
@@ -64,7 +61,6 @@ namespace PokerGame
 
             container = (FrameLayout)FindViewById(Resource.Id.GameContainer);
             container.AddView(new PokerTableView(this));
-
         }
 
         public void OnSuccess(Java.Lang.Object result)
@@ -91,16 +87,18 @@ namespace PokerGame
             }
 
             Repository.gameId = MyGame.Id.ToString();
-            getGameUpdatesTimer ??= new System.Threading.Timer(OnGetGameUpdatesTimer, autoResetEvent, 200, 1000);
+            getGameUpdatesTimer ??= new Timer(OnGetGameUpdatesTimer, autoResetEvent, 200, 1000);
 
+            var intent = new Intent(this, typeof(NotifyService));
+            intent.PutExtra("PlayerName", playerName);
+            StartService(intent);
         }
 
         void OnGetGame(DocumentSnapshot document)
         {
             MyGame = Repository.GetGame(document);
-            DrawPlayerCards(MyGame.Round, Me);
             DrawGameCards(MyGame.Round);
-            DrawPlayerStats(Me);
+            DrawPlayers(MyGame.Round, Me);
         }
 
         public void OnGetGameUpdatesTimer(Object stateInfo)
@@ -127,14 +125,18 @@ namespace PokerGame
             if (MyGame.Round == Round.NotStarted)
             {
                 MyGame.Round++;
+                MyGame.PlayBlinds();
+                Repository.UploadGame(MyGame);
+                return;
+            }
+            if (MyGame.Round == Round.Ended)
+            {
+                MyGame.StartNew();
                 Repository.UploadGame(MyGame);
                 return;
             }
             // set game player to next player for debugging
-            var id = Me.Id;
-            id++;
-            if (id >= MyGame.Players.Count)
-                id = 0;
+            var id = MyGame.GetNextPlayerIndex(Me.Id);
             playerName = MyGame.Players[id].Name;
         }
 
@@ -239,7 +241,7 @@ namespace PokerGame
             btngame.Click += Btngame_Click;
             var btnhome = (Button)d.FindViewById(Resource.Id.homebtn);
             btnhome.Click += Btnhome_Click;
-           var btnsignup = (Button)d.FindViewById(Resource.Id.signupbtn);
+            var btnsignup = (Button)d.FindViewById(Resource.Id.signupbtn);
             btnsignup.Click += Btnsignup_Click;
             d.Show();
         }
@@ -265,24 +267,20 @@ namespace PokerGame
         void DrawCard(string cardName, int left, int top)
         {
             // card image size is 500x726 pixels
-            var layoutParams = new RelativeLayout.LayoutParams(180 , 261);
+            var layoutParams = new RelativeLayout.LayoutParams(cardWidth, cardHeight);
             layoutParams.SetMargins(left, top, 0, 0);
             var imageView = new ImageView(this) { LayoutParameters = layoutParams };
             imageView.SetImageResource(Resources.GetIdentifier(cardName, "drawable", PackageName));
             rl2.AddView(imageView);
         }
 
-        void DrawPlayerCards(Round round, Player player)
+        void DrawPlayers(Round round, Player currentPlayer)
         {
             var w = rl2.Width;
             var h = rl2.Height;
 
             var centerX = w / 2;
             var centerY = h / 2;
-
-            var margin = 20;
-            var cardWidth = 180;
-            var cardHeight = 261;
 
             var cardsWidth = cardWidth * 5 + margin * 4;
 
@@ -299,46 +297,54 @@ namespace PokerGame
             var ny = startY - 2 * margin - cardHeight;
             var sy = startY + 2 * margin + cardHeight;
 
-            var upsidedown = "upsidedowncard";
-
-            var playerCards = MyGame.Players[player.Id].Cards;
-            var card0 = upsidedown;
-            var card1 = upsidedown;
-            var card2 = upsidedown;
-            var card3 = upsidedown;
-            var card4 = upsidedown;
-            var card5 = upsidedown;
-            var card6 = upsidedown;
-            var card7 = upsidedown;
-            if (MyGame.Round > Round.NotStarted)
+            var textViews = new[]
             {
-                card0 = playerCards[0].Name;
-                card1 = playerCards[1].Name;
-            }
-            DrawCard(card0, sx, sy);
-            DrawCard(card1, sx + 2*margin, sy);
-
-
-
-            //Draw other Players' Cards
-            if (MyGame.Players.Count > 1)
+                Resource.Id.tvPlayer0,
+                Resource.Id.tvPlayer1,
+                Resource.Id.tvPlayer2,
+                Resource.Id.tvPlayer3
+            };
+            var cardsPositions = new[]
             {
-                DrawCard(card2, nx, ny);
-                DrawCard(card3, nx+2*margin, ny);
-            }
-            if (MyGame.Players.Count > 2)
-            {
-                DrawCard(card4, ex, ey);
-                DrawCard(card5, ex + margin*2, ey);
-            }
-            if (MyGame.Players.Count > 3)
-            {
-                DrawCard(card6, wx, wy);
-                DrawCard(card7, wx + margin*2, wy);
-            }
-            
+                (sx, sy),
+                (wx, wy),
+                (nx, ny),
+                (ex, ey)
+            };
 
+            var playerIdToDraw = currentPlayer.Id;
+            for (int i = 0; i < 4; i++)
+            {
+                var textView = (TextView)FindViewById(textViews[i]);
+                textView.Text = "";
+                if (playerIdToDraw < MyGame.Players.Count)
+                {
+                    var player = MyGame.Players[playerIdToDraw];
+                    // draw stats
+                    var isCurrent = MyGame.CurrentPlayerIndex == playerIdToDraw;
+                    var gameEnded = MyGame.Round == Round.Ended;
+                    textView.Text = player.GetStatus(isCurrent, gameEnded);
+                    // draw cards
+                    var cardsPosition = cardsPositions[i];
+                    var showCards = player.Id == currentPlayer.Id
+                        ? MyGame.Round > Round.NotStarted
+                        : MyGame.Round == Round.Ended && !player.HasFolded;
+                    DrawPlayerCards(player, showCards, cardsPosition.Item1, cardsPosition.Item2);
+                }
+                playerIdToDraw++;
+                if (playerIdToDraw >= 4)
+                    playerIdToDraw = 0;
+            }
         }
+
+        void DrawPlayerCards(Player player, bool showCards, int left, int top)
+        {
+            var card0 = showCards ? player.Cards[0].Name : upsidedown;
+            var card1 = showCards ? player.Cards[1].Name : upsidedown;
+            DrawCard(card0, left, top);
+            DrawCard(card1, left + margin * 2, top);
+        }
+
         void DrawGameCards(Round round)
         {
             var w = rl2.Width;
@@ -347,16 +353,11 @@ namespace PokerGame
             var centerX = w / 2;
             var centerY = h / 2;
 
-            var margin = 20;
-            var cardWidth = 180;
-            var cardHeight = 261;
-
             var cardsWidth = cardWidth * 5 + margin * 4;
 
             var startX = centerX - cardsWidth / 2;
             var startY = centerY - cardHeight / 2;
 
-            var upsidedown = "upsidedowncard";
             var communityCards = MyGame.CommunityCards;
 
             var showFlop = round >= Round.Flop;
@@ -379,39 +380,5 @@ namespace PokerGame
             startX += cardWidth + margin;
             DrawCard(cardName4, startX, startY);
         }
-
-        void DrawPlayerStats(Player player)
-        {
-            var textViews = new int[]
-            {
-                Resource.Id.tvPlayer0,
-                Resource.Id.tvPlayer1,
-                Resource.Id.tvPlayer2,
-                Resource.Id.tvPlayer3
-            };
-
-            var playerIdToDraw = player.Id;
-            for (int i = 0; i < 4; i++)
-            {
-                var tvResourceId = textViews[i];
-                var textView = (TextView)FindViewById(tvResourceId);
-                textView.Text = "";
-                if (playerIdToDraw < MyGame.Players.Count)
-                {
-                    var playerToDraw = MyGame.Players[playerIdToDraw];
-                    textView.Text = playerToDraw.GetStatus();
-                    if (MyGame.CurrentPlayerIndex == playerIdToDraw)
-                    {
-                        textView.Text += "\nIs Current";
-                    }
-                }
-                playerIdToDraw++;
-                if (playerIdToDraw >= 4)
-                    playerIdToDraw = 0;
-            }
-
-
-        }
     }
-            
-    }
+}

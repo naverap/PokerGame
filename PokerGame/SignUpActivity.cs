@@ -76,7 +76,7 @@ namespace PokerGame
             if (string.IsNullOrEmpty(usernameEditText.Text)) { return false; }
             if (string.IsNullOrEmpty(passwordEditText.Text)) { return false; }
             if (!IsValidEmail(gmailEditText.Text)) { return false; }
-            if (passwordEditText != reEnterPasswordEditText) { return false; }
+            if (passwordEditText.Text != reEnterPasswordEditText.Text) { return false; }
             return true;
         }
 
